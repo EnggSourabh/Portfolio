@@ -1,12 +1,7 @@
 import { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import avatarImage from "./assets/avatar.png";
-
-// ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
-// Background: #0C0C0C  |  Accent: #00C896 (emerald-teal)  |  Text: #D7E2EA
-// Heading gradient: #646973 → #BBCCD7 (same as original)
-// Services bg: #FFFFFF with #0C0C0C text
-// Font: Kanit (weights 300–900)
+import InteractiveBackground from "./components/InteractiveBackground";
 
 // ─── FONT LOADER ─────────────────────────────────────────────────────────────
 function useFontLoader() {
@@ -20,23 +15,109 @@ function useFontLoader() {
 
 // ─── GLOBAL STYLES ───────────────────────────────────────────────────────────
 const globalStyles = `
+  :root {
+    --bg-primary: #F8F8F6;
+    --bg-secondary: #F1F0EE;
+    --bg-surface: #FFFFFF;
+    
+    --text-primary: #111118;
+    --text-secondary: #64646C;
+    --text-muted: #9A9AA4;
+    --text-inverse: #F8F8F6;
+    
+    --accent: #7C3AED;
+    --accent-hover: #6D28D9;
+    --accent-dark: #5B21B6;
+    --accent-light: #A78BFA;
+    --accent-glow: rgba(124, 58, 237, 0.10);
+    --accent-glow-strong: rgba(124, 58, 237, 0.20);
+    
+    --border: #E4E4E0;
+    --border-strong: #CCCCC8;
+    --border-accent: rgba(124, 58, 237, 0.30);
+    
+    --shadow-sm: 0 1px 3px rgba(17,17,24,0.06), 0 1px 2px rgba(17,17,24,0.04);
+    --shadow-md: 0 4px 16px rgba(17,17,24,0.08), 0 2px 6px rgba(17,17,24,0.04);
+    --shadow-card-hover: 0 8px 32px rgba(17,17,24,0.10), 0 0 0 1px rgba(124,58,237,0.12);
+    --shadow-violet: 0 0 0 1px rgba(124,58,237,0.25), 0 4px 20px rgba(124,58,237,0.15);
+    
+    --gradient-hero: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.07) 0%, transparent 65%);
+    --gradient-accent: linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%);
+    --gradient-dark: linear-gradient(135deg, #111118 0%, #1E1E28 100%);
+    
+    --nav-bg: rgba(248,248,246,0.45);
+    --nav-border: rgba(228,228,224,0.50);
+    --nav-backdrop: blur(20px) saturate(200%);
+    
+    --footer-bg: #111118;
+    --footer-surface: #1A1A24;
+    --footer-border: #2A2A38;
+    --footer-text: #9A9AA4;
+    --footer-accent: #A78BFA;
+
+    --success-bg: #D1FAE5;
+    --success: #059669;
+    --warning-bg: #FEF3C7;
+    --warning: #D97706;
+    --error-bg: #FEE2E2;
+    --error: #DC2626;
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body, #root { background: #0C0C0C; font-family: 'Kanit', sans-serif; }
+  
+  html, body, #root { background: transparent; font-family: 'Kanit', sans-serif; color: var(--text-primary); }
+  
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   .hero-heading {
-    background: linear-gradient(180deg, #646973 0%, #BBCCD7 100%);
+    background: var(--gradient-dark);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  
   .accent-gradient {
-    background: linear-gradient(135deg, #00C896 0%, #0099FF 100%);
+    background: var(--gradient-accent);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  
   ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #0C0C0C; }
-  ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+  .project-card {
+    transition: border-color 0.2s ease, box-shadow 0.25s ease, background 0.2s ease;
+  }
+  .project-card:hover {
+    border-color: var(--border-accent) !important;
+    box-shadow: var(--shadow-card-hover) !important;
+    background: var(--bg-surface) linear-gradient(0deg, rgba(124,58,237,0.02), rgba(124,58,237,0.02)) !important;
+  }
+
+  .contact-btn {
+    background: var(--accent);
+    color: #FFFFFF;
+    border-radius: 8px;
+    border: none;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+  }
+  .contact-btn:hover {
+    background: var(--accent-hover);
+    box-shadow: var(--shadow-violet);
+  }
+  
+  .nav-link {
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+  }
+  .nav-link:hover, .nav-link:active {
+    color: var(--accent);
+  }
 `;
 
 // ─── FADEIN COMPONENT ────────────────────────────────────────────────────────
@@ -101,15 +182,9 @@ function Magnet({ children, padding = 100, strength = 3 }) {
 function ContactButton() {
   return (
     <button
+      className="contact-btn"
       style={{
-        background: "linear-gradient(123deg, #001F18 7%, #00C896 37%, #0057FF 72%, #004C00 100%)",
-        boxShadow: "0px 4px 4px rgba(0,200,150,0.25), inset 4px 4px 12px #00996699",
-        outline: "2px solid #D7E2EA",
-        outlineOffset: "-3px",
-        borderRadius: "9999px",
-        border: "none",
         cursor: "pointer",
-        color: "#fff",
         fontFamily: "inherit",
         fontWeight: 500,
         textTransform: "uppercase",
@@ -154,18 +229,22 @@ function AnimatedText({ text, style = {} }) {
 const SKILLS_ROW1 = ["React.js", "Node.js", "TypeScript", "MongoDB", "Java", "DSA", "REST APIs", "Tailwind CSS", "Express.js", "Figma", "WebRTC"];
 const SKILLS_ROW2 = ["Socket.io", "MySQL", "Python", "FastAPI", "C++", "Git & GitHub", "Gemini API", "Postman", "Vercel", "UI/UX Design"];
 
+const CORE_TECH = ["React.js", "Node.js", "TypeScript", "GSAP", "Tailwind CSS", "MongoDB", "Express.js", "FastAPI", "Java"];
+
 function SkillPill({ label }) {
+  const isCore = CORE_TECH.includes(label);
+  
   return (
     <div
       style={{
         display: "inline-flex",
         alignItems: "center",
         gap: "0.5rem",
-        background: "#111",
-        border: "1px solid #2a2a2a",
+        background: isCore ? "#F3F0FF" : "#F4F4F2",
+        border: isCore ? "0.5px solid #DDD6FE" : "0.5px solid #E4E4E0",
         borderRadius: "9999px",
         padding: "0.5rem 1.4rem",
-        color: "#D7E2EA",
+        color: isCore ? "#5B21B6" : "#44444A",
         fontWeight: 400,
         fontSize: "clamp(0.75rem, 1.3vw, 1rem)",
         whiteSpace: "nowrap",
@@ -173,7 +252,8 @@ function SkillPill({ label }) {
         textTransform: "uppercase",
       }}
     >
-      <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#00C896", flexShrink: 0 }} />
+      {/* Decorative dot */}
+      <span style={{ width: 7, height: 7, borderRadius: "50%", background: isCore ? "var(--accent)" : "var(--text-muted)", flexShrink: 0 }} />
       {label}
     </div>
   );
@@ -202,7 +282,7 @@ function SkillsMarquee() {
   return (
     <section
       ref={sectionRef}
-      style={{ background: "#0C0C0C", padding: "6rem 0 2.5rem", overflow: "hidden" }}
+      style={{ background: "var(--bg-secondary)", padding: "6rem 0 2.5rem", overflow: "hidden" }}
     >
       <div ref={row1Ref} style={{ display: "flex", gap: "0.75rem", willChange: "transform", marginBottom: "0.75rem" }}>
         {row1.map((s, i) => <SkillPill key={i} label={s} />)}
@@ -214,40 +294,56 @@ function SkillsMarquee() {
   );
 }
 
-// ─── HERO SECTION ────────────────────────────────────────────────────────────
-function HeroSection() {
+// ─── NAVBAR ──────────────────────────────────────────────────────────────────
+function NavBar() {
   return (
-    <section
-      className="h-screen flex flex-col relative bg-[#0C0C0C] overflow-x-clip"
-    >
-      {/* Navbar */}
+    <div style={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 100 }}>
       <FadeIn delay={0} y={-20}>
-        <nav className="flex justify-center sm:justify-between flex-wrap gap-4 pt-6 px-4 sm:px-10 relative z-20">
+        <nav 
+          className="flex justify-center sm:justify-between flex-wrap gap-4 pt-6 px-4 sm:px-10"
+          style={{
+            background: "var(--nav-bg)",
+            backdropFilter: "var(--nav-backdrop)",
+            WebkitBackdropFilter: "var(--nav-backdrop)",
+            borderBottom: "1px solid var(--nav-border)",
+            paddingBottom: "1.5rem",
+            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)"
+          }}
+        >
           {["About", "Skills", "Projects", "Contact"].map((link) => (
             <a
               key={link}
               href={`#${link.toLowerCase()}`}
+              className="nav-link"
               style={{
-                color: "#D7E2EA",
                 fontWeight: 500,
                 textTransform: "uppercase",
                 letterSpacing: "0.12em",
                 fontSize: "clamp(0.75rem, 1.4vw, 1.4rem)",
                 textDecoration: "none",
-                opacity: 0.85,
-                transition: "opacity 200ms",
               }}
-              onMouseEnter={e => e.target.style.opacity = 0.5}
-              onMouseLeave={e => e.target.style.opacity = 0.85}
             >
               {link}
             </a>
           ))}
         </nav>
       </FadeIn>
+    </div>
+  );
+}
+
+// ─── HERO SECTION ────────────────────────────────────────────────────────────
+function HeroSection() {
+  return (
+    <section
+      className="h-screen flex flex-col relative overflow-x-clip"
+      style={{ background: "transparent", paddingTop: "5rem" }}
+    >
+      {/* Background glow behind avatar */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'var(--gradient-hero)', pointerEvents: 'none', zIndex: 0 }}></div>
 
       {/* Hero Heading */}
-      <FadeIn delay={0.15} y={40} className="w-full flex-none text-center px-4 sm:px-0 mt-8 sm:mt-0">
+      <FadeIn delay={0.15} y={40} className="w-full flex-none text-center px-4 sm:px-0 mt-8 sm:mt-0 relative z-20">
         <h1
           className="hero-heading"
           style={{
@@ -272,7 +368,7 @@ function HeroSection() {
               <img
                 src={avatarImage}
                 alt="Sourabh Meena 3D Avatar"
-                className="w-[200px] sm:w-[clamp(250px,32vw,480px)] h-auto object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]"
+                className="w-[200px] sm:w-[clamp(250px,32vw,480px)] h-auto object-contain drop-shadow-[0_20px_30px_rgba(17,17,24,0.1)]"
               />
             </Magnet>
           </div>
@@ -282,7 +378,7 @@ function HeroSection() {
       {/* Bottom Bar */}
       <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center sm:items-end px-4 sm:px-10 pb-8 sm:pb-10 mt-auto relative z-20 gap-6 sm:gap-0">
         <FadeIn delay={0.35} y={20}>
-          <p className="text-center sm:text-left text-[#D7E2EA] font-medium uppercase tracking-[0.08em] leading-[1.6] text-[clamp(0.8rem,1.5vw,1.2rem)] max-w-[350px]">
+          <p className="text-center sm:text-left font-medium uppercase tracking-[0.08em] leading-[1.6] text-[clamp(0.8rem,1.5vw,1.2rem)] max-w-[350px]" style={{ color: "var(--text-secondary)" }}>
             FULL-STACK DEV · UI/UX<br />
             DESIGNER · DSA MENTOR
           </p>
@@ -329,7 +425,7 @@ function AboutSection() {
         padding: "5rem 2rem",
         position: "relative",
         overflow: "hidden",
-        background: "#0C0C0C",
+        background: "var(--bg-secondary)",
       }}
     >
       {/* Decorative elements */}
@@ -338,16 +434,16 @@ function AboutSection() {
           <motion.div
             animate={{ y: [0, -15, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            whileHover={{ scale: 1.15, rotate: 10, filter: "drop-shadow(0 0 15px rgba(0,200,150,0.5))" }}
+            whileHover={{ scale: 1.15, rotate: 10, filter: "drop-shadow(0 0 15px rgba(124,58,237,0.3))" }}
             style={{ cursor: "pointer" }}
           >
             <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-              <circle cx="70" cy="70" r="60" stroke="#2a2a2a" strokeWidth="1" />
-              <circle cx="70" cy="70" r="40" stroke="#00C896" strokeWidth="0.5" strokeDasharray="4 6" />
-              <circle cx="70" cy="70" r="20" fill="#00C89618" />
-              <circle cx="70" cy="20" r="5" fill="#00C896" />
-              <circle cx="70" cy="120" r="3" fill="#0099FF" />
-              <circle cx="20" cy="70" r="3" fill="#0099FF" />
+              <circle cx="70" cy="70" r="60" stroke="var(--border-strong)" strokeWidth="1" />
+              <circle cx="70" cy="70" r="40" stroke="var(--accent-light)" strokeWidth="0.5" strokeDasharray="4 6" />
+              <circle cx="70" cy="70" r="20" fill="var(--accent-glow)" />
+              <circle cx="70" cy="20" r="5" fill="var(--accent)" />
+              <circle cx="70" cy="120" r="3" fill="var(--accent-dark)" />
+              <circle cx="20" cy="70" r="3" fill="var(--accent-dark)" />
             </svg>
           </motion.div>
         </motion.div>
@@ -358,19 +454,19 @@ function AboutSection() {
           <motion.div
             animate={{ y: [0, -20, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            whileHover={{ scale: 1.15, rotate: -5, filter: "drop-shadow(0 0 15px rgba(255,95,86,0.4))" }}
+            whileHover={{ scale: 1.15, rotate: -5, filter: "drop-shadow(0 0 15px rgba(124,58,237,0.2))" }}
             style={{ cursor: "pointer" }}
           >
             <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-              <rect x="10" y="10" width="120" height="90" rx="8" stroke="#2a2a2a" strokeWidth="1" />
-              <rect x="10" y="10" width="120" height="18" rx="8" fill="#1a1a1a" />
-              <circle cx="26" cy="19" r="3" fill="#FF5F56" />
-              <circle cx="40" cy="19" r="3" fill="#FFBD2E" />
-              <circle cx="54" cy="19" r="3" fill="#27C93F" />
-              <rect x="22" y="38" width="50" height="4" rx="2" fill="#00C896" opacity="0.7" />
-              <rect x="22" y="50" width="80" height="4" rx="2" fill="#D7E2EA" opacity="0.3" />
-              <rect x="22" y="62" width="60" height="4" rx="2" fill="#D7E2EA" opacity="0.3" />
-              <rect x="34" y="74" width="40" height="4" rx="2" fill="#0099FF" opacity="0.6" />
+              <rect x="10" y="10" width="120" height="90" rx="8" stroke="var(--border)" strokeWidth="1" />
+              <rect x="10" y="10" width="120" height="18" rx="8" fill="var(--bg-surface)" />
+              <circle cx="26" cy="19" r="3" fill="var(--error)" />
+              <circle cx="40" cy="19" r="3" fill="var(--warning)" />
+              <circle cx="54" cy="19" r="3" fill="var(--success)" />
+              <rect x="22" y="38" width="50" height="4" rx="2" fill="var(--accent)" opacity="0.7" />
+              <rect x="22" y="50" width="80" height="4" rx="2" fill="var(--text-muted)" opacity="0.3" />
+              <rect x="22" y="62" width="60" height="4" rx="2" fill="var(--text-muted)" opacity="0.3" />
+              <rect x="34" y="74" width="40" height="4" rx="2" fill="var(--accent-light)" opacity="0.6" />
             </svg>
           </motion.div>
         </motion.div>
@@ -381,14 +477,14 @@ function AboutSection() {
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            whileHover={{ scale: 1.15, rotate: 8, filter: "drop-shadow(0 0 15px rgba(0,200,150,0.6))" }}
+            whileHover={{ scale: 1.15, rotate: 8, filter: "drop-shadow(0 0 15px rgba(124,58,237,0.3))" }}
             style={{ cursor: "pointer" }}
           >
             <svg width="110" height="110" viewBox="0 0 110 110" fill="none">
-              <polygon points="55,5 105,30 105,80 55,105 5,80 5,30" stroke="#2a2a2a" strokeWidth="1" fill="none" />
-              <polygon points="55,20 90,37.5 90,72.5 55,90 20,72.5 20,37.5" stroke="#00C896" strokeWidth="0.5" fill="#00C89608" />
-              <circle cx="55" cy="55" r="12" fill="#0C0C0C" stroke="#00C896" strokeWidth="1" />
-              <text x="55" y="59" textAnchor="middle" fill="#00C896" fontSize="10" fontFamily="monospace">&lt;/&gt;</text>
+              <polygon points="55,5 105,30 105,80 55,105 5,80 5,30" stroke="var(--border-strong)" strokeWidth="1" fill="none" />
+              <polygon points="55,20 90,37.5 90,72.5 55,90 20,72.5 20,37.5" stroke="var(--accent)" strokeWidth="0.5" fill="var(--accent-glow)" />
+              <circle cx="55" cy="55" r="12" fill="var(--bg-primary)" stroke="var(--accent)" strokeWidth="1" />
+              <text x="55" y="59" textAnchor="middle" fill="var(--accent)" fontSize="10" fontFamily="monospace">&lt;/&gt;</text>
             </svg>
           </motion.div>
         </motion.div>
@@ -399,17 +495,17 @@ function AboutSection() {
           <motion.div
             animate={{ y: [0, -18, 0] }}
             transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-            whileHover={{ scale: 1.15, rotate: -8, filter: "drop-shadow(0 0 15px rgba(0,153,255,0.4))" }}
+            whileHover={{ scale: 1.15, rotate: -8, filter: "drop-shadow(0 0 15px rgba(124,58,237,0.2))" }}
             style={{ cursor: "pointer" }}
           >
             <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-              <rect x="15" y="55" width="90" height="50" rx="6" stroke="#2a2a2a" strokeWidth="1" fill="#111" />
-              <rect x="35" y="45" width="50" height="20" rx="4" stroke="#2a2a2a" strokeWidth="1" fill="#0C0C0C" />
-              <rect x="50" y="105" width="20" height="12" rx="2" fill="#1a1a1a" />
-              <rect x="30" y="117" width="60" height="3" rx="1.5" fill="#2a2a2a" />
-              <rect x="22" y="62" width="40" height="3" rx="1.5" fill="#0099FF" opacity="0.7" />
-              <rect x="22" y="72" width="60" height="3" rx="1.5" fill="#D7E2EA" opacity="0.3" />
-              <rect x="22" y="82" width="50" height="3" rx="1.5" fill="#D7E2EA" opacity="0.3" />
+              <rect x="15" y="55" width="90" height="50" rx="6" stroke="var(--border)" strokeWidth="1" fill="var(--bg-surface)" />
+              <rect x="35" y="45" width="50" height="20" rx="4" stroke="var(--border)" strokeWidth="1" fill="var(--bg-primary)" />
+              <rect x="50" y="105" width="20" height="12" rx="2" fill="var(--border-strong)" />
+              <rect x="30" y="117" width="60" height="3" rx="1.5" fill="var(--border-strong)" />
+              <rect x="22" y="62" width="40" height="3" rx="1.5" fill="var(--accent)" opacity="0.7" />
+              <rect x="22" y="72" width="60" height="3" rx="1.5" fill="var(--text-muted)" opacity="0.3" />
+              <rect x="22" y="82" width="50" height="3" rx="1.5" fill="var(--text-muted)" opacity="0.3" />
             </svg>
           </motion.div>
         </motion.div>
@@ -418,9 +514,9 @@ function AboutSection() {
       {/* Heading */}
       <FadeIn delay={0} y={40}>
         <h2
-          className="hero-heading"
           style={{
             fontWeight: 900,
+            color: "var(--text-primary)",
             textTransform: "uppercase",
             lineHeight: 1,
             letterSpacing: "-0.02em",
@@ -437,7 +533,7 @@ function AboutSection() {
       <AnimatedText
         text="Third-year B.Tech IT student building production-grade full-stack applications with React, Node.js, and AI integration. I mentor 100+ students in DSA, lead developer communities, and ship real products that solve real problems. Let's build something powerful together!"
         style={{
-          color: "#D7E2EA",
+          color: "var(--text-secondary)",
           fontWeight: 500,
           textAlign: "center",
           lineHeight: 1.7,
@@ -490,8 +586,9 @@ function ServiceItem({ s, i }) {
     offset: ["start center", "center center"]
   });
 
-  const numColor = useTransform(scrollYProgress, [0, 1], ["rgba(12,12,12,0.08)", "#00C896"]);
-  const numOpacity = useTransform(scrollYProgress, [0, 1], [0.08, 1]);
+  // Calculate interpolation between transparent gray and accent
+  const numColor = useTransform(scrollYProgress, [0, 1], ["rgba(17,17,24, 0.05)", "var(--accent)"]);
+  const numOpacity = useTransform(scrollYProgress, [0, 1], [0.05, 1]);
 
   return (
     <FadeIn delay={i * 0.1} y={30}>
@@ -502,8 +599,8 @@ function ServiceItem({ s, i }) {
           alignItems: "flex-start",
           gap: "2rem",
           padding: "2.5rem 0",
-          borderTop: i === 0 ? "1px solid rgba(12,12,12,0.15)" : "none",
-          borderBottom: "1px solid rgba(12,12,12,0.15)",
+          borderTop: i === 0 ? "1px solid var(--border)" : "none",
+          borderBottom: "1px solid var(--border)",
         }}
       >
         <motion.span
@@ -524,7 +621,7 @@ function ServiceItem({ s, i }) {
             style={{
               fontWeight: 500,
               textTransform: "uppercase",
-              color: "#0C0C0C",
+              color: "var(--text-primary)",
               fontSize: "clamp(1rem, 2.2vw, 1.9rem)",
               marginBottom: "0.5rem",
             }}
@@ -534,8 +631,7 @@ function ServiceItem({ s, i }) {
           <p
             style={{
               fontWeight: 300,
-              color: "#0C0C0C",
-              opacity: 0.6,
+              color: "var(--text-secondary)",
               lineHeight: 1.6,
               fontSize: "clamp(0.85rem, 1.5vw, 1.1rem)",
               maxWidth: "600px",
@@ -554,7 +650,7 @@ function ServicesSection() {
     <section
       id="skills"
       style={{
-        background: "#FFFFFF",
+        background: "transparent",
         borderRadius: "50px 50px 0 0",
         padding: "5rem 2rem 6rem",
       }}
@@ -564,7 +660,7 @@ function ServicesSection() {
           style={{
             fontWeight: 900,
             textTransform: "uppercase",
-            color: "#0C0C0C",
+            color: "var(--text-primary)",
             textAlign: "center",
             fontSize: "clamp(3rem, 12vw, 140px)",
             lineHeight: 1,
@@ -593,7 +689,6 @@ const PROJECTS = [
     category: "AI / Full-Stack",
     desc: "Real-time mock interview platform with WebRTC video, Gemini AI expression analysis, and performance analytics dashboards.",
     tech: ["React.js", "Node.js", "MongoDB", "Gemini API", "WebRTC", "Socket.io"],
-    color: "#00C896",
     link: "#",
   },
   {
@@ -602,7 +697,6 @@ const PROJECTS = [
     category: "PWA / AI",
     desc: "Progressive Web App for civic issue reporting via photo/voice input with GPS tagging and real-time tracking dashboards.",
     tech: ["React.js", "Node.js", "MongoDB", "GPS API", "PWA"],
-    color: "#0099FF",
     link: "#",
   },
   {
@@ -611,7 +705,6 @@ const PROJECTS = [
     category: "AI / Platform",
     desc: "AI-powered teammate recommender using role-based matching and profile similarity scoring. Built smart team composition engine with FastAPI.",
     tech: ["React.js", "FastAPI", "MongoDB", "Python", "AI"],
-    color: "#FF9900",
     link: "#",
   },
 ];
@@ -623,15 +716,16 @@ function ProjectCard({ project, index, total, progress }) {
   return (
     <div style={{ height: "85vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <motion.div
+        className="project-card"
         style={{
           scale,
           position: "sticky",
           top: `${96 + index * 28}px`,
           width: "100%",
           maxWidth: "900px",
-          borderRadius: "50px",
-          border: "2px solid #D7E2EA22",
-          background: "#111",
+          borderRadius: "14px",
+          border: "0.5px solid var(--border)",
+          background: "var(--bg-surface)",
           padding: "2rem 2.5rem",
           willChange: "transform",
         }}
@@ -641,17 +735,17 @@ function ProjectCard({ project, index, total, progress }) {
           <div style={{ display: "flex", alignItems: "baseline", gap: "1.5rem" }}>
             <span style={{
               fontWeight: 900,
-              fontSize: "clamp(2.5rem, 7vw, 6rem)",
-              color: project.color,
+              fontSize: "11px",
+              color: "var(--accent)",
+              letterSpacing: "0.1em",
               lineHeight: 1,
-              opacity: 0.3,
-            }}>{project.num}</span>
+            }}>PROJECT {project.num}</span>
             <div>
-              <p style={{ color: "#D7E2EA", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.1em", fontSize: "0.8rem", marginBottom: "0.25rem" }}>
+              <p style={{ color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.1em", fontSize: "0.8rem", marginBottom: "0.25rem" }}>
                 {project.category}
               </p>
               <h3 style={{
-                color: "#D7E2EA",
+                color: "var(--text-primary)",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 fontSize: "clamp(1.2rem, 2.5vw, 2rem)",
@@ -662,9 +756,9 @@ function ProjectCard({ project, index, total, progress }) {
           <a
             href={project.link}
             style={{
-              borderRadius: "9999px",
-              border: "2px solid #D7E2EA44",
-              color: "#D7E2EA",
+              borderRadius: "8px",
+              border: "0.5px solid var(--border)",
+              color: "var(--text-secondary)",
               fontWeight: 500,
               textTransform: "uppercase",
               letterSpacing: "0.12em",
@@ -672,8 +766,10 @@ function ProjectCard({ project, index, total, progress }) {
               fontSize: "0.75rem",
               textDecoration: "none",
               background: "transparent",
-              transition: "background 200ms",
+              transition: "background 0.2s ease",
             }}
+            onMouseEnter={e => e.currentTarget.style.background = "var(--bg-secondary)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
           >
             View Project
           </a>
@@ -681,8 +777,7 @@ function ProjectCard({ project, index, total, progress }) {
 
         {/* Description */}
         <p style={{
-          color: "#D7E2EA",
-          opacity: 0.65,
+          color: "var(--text-secondary)",
           fontWeight: 300,
           lineHeight: 1.7,
           fontSize: "clamp(0.85rem, 1.5vw, 1.1rem)",
@@ -696,9 +791,9 @@ function ProjectCard({ project, index, total, progress }) {
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
           {project.tech.map((t) => (
             <span key={t} style={{
-              background: `${project.color}18`,
-              border: `1px solid ${project.color}44`,
-              color: project.color,
+              background: "var(--accent-glow)",
+              border: "0.5px solid var(--accent-light)",
+              color: "var(--accent-dark)",
               borderRadius: "9999px",
               padding: "0.25rem 0.85rem",
               fontSize: "0.75rem",
@@ -722,7 +817,7 @@ function ProjectsSection() {
       id="projects"
       ref={containerRef}
       style={{
-        background: "#0C0C0C",
+        background: "var(--bg-secondary)",
         borderRadius: "50px 50px 0 0",
         marginTop: "-3rem",
         position: "relative",
@@ -732,12 +827,12 @@ function ProjectsSection() {
     >
       <FadeIn delay={0} y={40}>
         <h2
-          className="hero-heading"
           style={{
             fontWeight: 900,
             textTransform: "uppercase",
             lineHeight: 1,
             letterSpacing: "-0.02em",
+            color: "var(--text-primary)",
             textAlign: "center",
             fontSize: "clamp(3rem, 12vw, 140px)",
             marginBottom: "4rem",
@@ -760,9 +855,9 @@ function Footer() {
     <footer
       id="contact"
       style={{
-        background: "#080808",
+        background: "var(--footer-bg)",
         padding: "5rem 2.5rem 3rem",
-        borderTop: "1px solid #1a1a1a",
+        borderTop: "1px solid var(--footer-border)",
         textAlign: "center",
       }}
     >
@@ -776,6 +871,9 @@ function Footer() {
             lineHeight: 1,
             letterSpacing: "-0.02em",
             marginBottom: "1.5rem",
+            background: "var(--text-inverse)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent"
           }}
         >
           Let&apos;s Build
@@ -784,8 +882,7 @@ function Footer() {
 
       <FadeIn delay={0.2} y={20}>
         <p style={{
-          color: "#D7E2EA",
-          opacity: 0.5,
+          color: "var(--footer-text)",
           fontWeight: 300,
           fontSize: "clamp(0.9rem, 1.5vw, 1.2rem)",
           marginBottom: "2.5rem",
@@ -808,20 +905,27 @@ function Footer() {
               key={l.label}
               href={l.href}
               style={{
-                color: "#D7E2EA",
+                color: "var(--footer-accent)",
                 textDecoration: "none",
                 fontWeight: 500,
                 textTransform: "uppercase",
                 letterSpacing: "0.1em",
                 fontSize: "0.85rem",
-                opacity: 0.6,
-                transition: "opacity 200ms",
+                opacity: 0.8,
+                transition: "opacity 200ms, background 200ms",
                 padding: "0.5rem 1.25rem",
-                border: "1px solid #2a2a2a",
+                border: "1px solid var(--footer-border)",
+                background: "var(--footer-surface)",
                 borderRadius: "9999px",
               }}
-              onMouseEnter={e => e.currentTarget.style.opacity = 1}
-              onMouseLeave={e => e.currentTarget.style.opacity = 0.6}
+              onMouseEnter={e => {
+                e.currentTarget.style.opacity = 1;
+                e.currentTarget.style.background = "var(--border-accent)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.opacity = 0.8;
+                e.currentTarget.style.background = "var(--footer-surface)";
+              }}
             >
               {l.label}
             </a>
@@ -829,7 +933,7 @@ function Footer() {
         </div>
       </FadeIn>
 
-      <p style={{ color: "#D7E2EA", opacity: 0.2, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.15em" }}>
+      <p style={{ color: "var(--footer-text)", opacity: 0.5, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.15em" }}>
         © 2026 Sourabh Meena · IIST Indore
       </p>
     </footer>
@@ -843,7 +947,9 @@ export default function App() {
   return (
     <>
       <style>{globalStyles}</style>
-      <div style={{ overflowX: "clip", background: "#0C0C0C" }}>
+      <InteractiveBackground />
+      <NavBar />
+      <div style={{ overflowX: "clip", background: "transparent" }}>
         <HeroSection />
         <SkillsMarquee />
         <AboutSection />
