@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import avatarImage from "./assets/avatar.png";
+import bgImage from "./assets/1.png";
 import InteractiveBackground from "./components/InteractiveBackground";
 
 // ─── FONT LOADER ─────────────────────────────────────────────────────────────
@@ -44,10 +45,9 @@ const globalStyles = `
     --gradient-hero: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.07) 0%, transparent 65%);
     --gradient-accent: linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%);
     --gradient-dark: linear-gradient(135deg, #111118 0%, #1E1E28 100%);
-    
-    --nav-bg: rgba(248,248,246,0.45);
-    --nav-border: rgba(228,228,224,0.50);
-    --nav-backdrop: blur(20px) saturate(200%);
+    --nav-bg: rgba(255, 255, 255, 0.05);
+    --nav-border: rgba(255, 255, 255, 0.3);
+    --nav-backdrop: blur(40px) saturate(200%);
     
     --footer-bg: #111118;
     --footer-surface: #1A1A24;
@@ -118,24 +118,241 @@ const globalStyles = `
   .nav-link:hover, .nav-link:active {
     color: var(--accent);
   }
+
+  /* ─── APPLE DOCK HOVER ANIMATION ─── */
+  .skill-pill {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center;
+    position: relative;
+    z-index: 1;
+    will-change: transform, margin;
+  }
+  .skill-pill:hover {
+    transform: scale(1.4);
+    margin: 0 0.8rem;
+    z-index: 10;
+  }
+  .skill-pill:has(+ .skill-pill:hover) {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  .skill-pill:hover + .skill-pill {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+
+  /* ─── VERTICAL TEXT ROLL ANIMATION ─── */
+  .nav-roll-link {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+    height: 1.1em;
+    text-decoration: none;
+    align-items: center;
+  }
+
+  .nav-roll-placeholder {
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .nav-roll-text,
+  .nav-roll-duplicate {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    line-height: 1;
+    transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav-roll-text {
+    transform: translateY(0%);
+  }
+
+  .nav-roll-duplicate {
+    transform: translateY(100%);
+  }
+
+  .nav-roll-link:hover .nav-roll-text {
+    transform: translateY(-100%);
+  }
+
+  .nav-roll-link:hover .nav-roll-duplicate {
+    transform: translateY(0%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-roll-text,
+    .nav-roll-duplicate {
+      transition: none !important;
+    }
+    .nav-roll-link:hover .nav-roll-text {
+      transform: translateY(0%);
+    }
+    .nav-roll-link:hover .nav-roll-duplicate {
+      transform: translateY(100%);
+    }
+  }
+
+  /* ─── HERO CHARACTER HOVER EFFECT (APPLE MAC-OS DOCK) ─── */
+  .hero-char {
+    display: inline-block;
+    transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+    transform-origin: bottom center;
+    position: relative;
+    z-index: 1;
+    will-change: transform, text-shadow;
+    
+    /* Inherit the gradient clip correctly */
+    background: var(--gradient-dark);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .hero-heading:hover .hero-char {
+    opacity: 0.4;
+  }
+
+  .hero-heading .hero-char:hover {
+    opacity: 1;
+    text-shadow: 0 10px 30px rgba(124, 58, 237, 0.3), 0 0 15px rgba(167, 139, 250, 0.4);
+    transform: scale(1.08) translateY(-4%);
+    -webkit-text-fill-color: var(--accent);
+    z-index: 10;
+    cursor: default;
+  }
+
+  /* MacOS Dock style sibling magnification (1 letter away) */
+  .hero-heading .hero-char:has(+ .hero-char:hover),
+  .hero-heading .hero-char:hover + .hero-char {
+    opacity: 0.8;
+    transform: scale(1.03) translateY(-2%);
+    -webkit-text-fill-color: var(--text-primary);
+    z-index: 5;
+  }
+  
+  /* MacOS Dock style sibling magnification (2 letters away) */
+  .hero-heading .hero-char:has(+ .hero-char + .hero-char:hover),
+  .hero-heading .hero-char:hover + .hero-char + .hero-char {
+    opacity: 0.6;
+    transform: scale(1.01) translateY(-0.5%);
+    -webkit-text-fill-color: var(--text-primary);
+    z-index: 2;
+  }
 `;
 
-// ─── FADEIN COMPONENT ────────────────────────────────────────────────────────
-function FadeIn({ children, delay = 0, duration = 0.7, x = 0, y = 30, className = "" }) {
+// ─── FADEIN COMPONENT (NOW JUMP IN) ──────────────────────────────────────────
+function FadeIn({ children, delay = 0, x = 0, y = 30, className = "" }) {
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, x, y }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      initial={{ opacity: 0, x, y, scale: 0.95, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "50px", amount: 0 }}
-      transition={{ duration, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ type: "spring", stiffness: 100, damping: 20, delay }}
     >
       {children}
     </motion.div>
   );
 }
 
-// ─── MAGNET COMPONENT ────────────────────────────────────────────────────────
+// ─── PARALLAX BACKGROUND ───────────────────────────────────────────────────
+function ParallaxBackground() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+
+  // Create highly noticeable parallax mapping scrollYProgress (0 to 1) to massive translations
+  const yFastUp = useTransform(scrollYProgress, [0, 1], [600, -600]);
+  const ySlowUp = useTransform(scrollYProgress, [0, 1], [300, -300]);
+  const ySlowDown = useTransform(scrollYProgress, [0, 1], [-400, 400]);
+  const rotateClockwise = useTransform(scrollYProgress, [0, 1], [0, 720]);
+  const rotateCounter = useTransform(scrollYProgress, [0, 1], [0, -360]);
+
+  return (
+    <div ref={ref} style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+      {/* Large faint wireframe circle NOW WITH AVATAR IMAGE */}
+      <motion.div
+        style={{
+          position: "absolute",
+          top: "5%",
+          left: "-10%",
+          width: "50vw",
+          height: "50vw",
+          maxWidth: 600,
+          maxHeight: 600,
+          borderRadius: "50%",
+          border: "4px solid rgba(124, 58, 237, 0.4)", // Much thicker and brighter
+          boxShadow: "0 0 50px rgba(124, 58, 237, 0.15)",
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.8, // Slightly transparent so it blends with the background
+          y: yFastUp,
+        }}
+      />
+
+      {/* Rotating dashed square */}
+      <motion.div
+        style={{
+          position: "absolute",
+          bottom: "20%",
+          right: "5%",
+          width: 250,
+          height: 250,
+          border: "6px dashed rgba(167, 139, 250, 0.5)", // Much thicker and brighter
+          borderRadius: "10%",
+          rotate: rotateClockwise,
+          y: ySlowDown,
+        }}
+      />
+
+      {/* Small floating cross/plus */}
+      <motion.div
+        style={{
+          position: "absolute",
+          top: "20%",
+          right: "20%",
+          color: "rgba(124, 58, 237, 0.6)",
+          fontSize: "8rem", // Much larger
+          fontWeight: 300,
+          lineHeight: 1,
+          rotate: rotateCounter,
+          y: ySlowUp,
+        }}
+      >
+        +
+      </motion.div>
+
+      {/* Solid accent dot */}
+      <motion.div
+        style={{
+          position: "absolute",
+          bottom: "10%",
+          left: "25%",
+          width: 40, // Larger
+          height: 40,
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, rgba(167, 139, 250, 0.8), rgba(124, 58, 237, 0.8))",
+          boxShadow: "0 0 40px rgba(124, 58, 237, 0.6)",
+          y: yFastUp,
+        }}
+      />
+    </div>
+  );
+}
+
+// ─── SKILL PILL COMPONENT ────────────────────────────────────────────────────────
 function Magnet({ children, padding = 100, strength = 3 }) {
   const ref = useRef(null);
   const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -233,9 +450,10 @@ const CORE_TECH = ["React.js", "Node.js", "TypeScript", "GSAP", "Tailwind CSS", 
 
 function SkillPill({ label }) {
   const isCore = CORE_TECH.includes(label);
-  
+
   return (
     <div
+      className="skill-pill"
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -250,10 +468,19 @@ function SkillPill({ label }) {
         whiteSpace: "nowrap",
         letterSpacing: "0.05em",
         textTransform: "uppercase",
+        boxShadow: isCore ? "0 0 20px rgba(124, 58, 237, 0.4), inset 0 0 10px rgba(124, 58, 237, 0.1)" : "0 0 15px rgba(255, 255, 255, 0.5)",
+        cursor: "pointer",
       }}
     >
       {/* Decorative dot */}
-      <span style={{ width: 7, height: 7, borderRadius: "50%", background: isCore ? "var(--accent)" : "var(--text-muted)", flexShrink: 0 }} />
+      <span style={{
+        width: 7,
+        height: 7,
+        borderRadius: "50%",
+        background: isCore ? "var(--accent)" : "var(--text-muted)",
+        flexShrink: 0,
+        boxShadow: isCore ? "0 0 10px var(--accent), 0 0 5px var(--accent-light)" : "none"
+      }} />
       {label}
     </div>
   );
@@ -265,15 +492,41 @@ function SkillsMarquee() {
   const row2Ref = useRef(null);
 
   useEffect(() => {
+    let currentOffset = 0;
+    let targetOffset = 0;
+    let animationFrameId;
+
+    const lerp = (start, end, factor) => start + (end - start) * factor;
+
     const onScroll = () => {
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      const offset = (-rect.top + window.innerHeight) * 0.3;
-      if (row1Ref.current) row1Ref.current.style.transform = `translateX(${offset - 200}px)`;
-      if (row2Ref.current) row2Ref.current.style.transform = `translateX(${-(offset - 200)}px)`;
+      // Using window.scrollY avoids forced layout thrashing caused by getBoundingClientRect
+      targetOffset = window.scrollY * 0.4;
     };
+
+    const update = () => {
+      currentOffset = lerp(currentOffset, targetOffset, 0.08);
+
+      if (row1Ref.current) {
+        row1Ref.current.style.transform = `translate3d(${currentOffset - 200}px, 0, 0)`;
+      }
+      if (row2Ref.current) {
+        row2Ref.current.style.transform = `translate3d(${-(currentOffset - 200)}px, 0, 0)`;
+      }
+
+      animationFrameId = requestAnimationFrame(update);
+    };
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    // Initialize immediately to prevent jump on first scroll
+    onScroll();
+    currentOffset = targetOffset;
+    update();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
   const row1 = [...SKILLS_ROW1, ...SKILLS_ROW1, ...SKILLS_ROW1];
@@ -282,7 +535,13 @@ function SkillsMarquee() {
   return (
     <section
       ref={sectionRef}
-      style={{ background: "var(--bg-secondary)", padding: "6rem 0 2.5rem", overflow: "hidden" }}
+      style={{
+        background: "rgba(241, 240, 238, 0.4)",
+        backdropFilter: "blur(4px) saturate(120%)",
+        WebkitBackdropFilter: "blur(4px) saturate(120%)",
+        padding: "6rem 0 2.5rem",
+        overflow: "hidden"
+      }}
     >
       <div ref={row1Ref} style={{ display: "flex", gap: "0.75rem", willChange: "transform", marginBottom: "0.75rem" }}>
         {row1.map((s, i) => <SkillPill key={i} label={s} />)}
@@ -297,38 +556,52 @@ function SkillsMarquee() {
 // ─── NAVBAR ──────────────────────────────────────────────────────────────────
 function NavBar() {
   return (
-    <div style={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 100 }}>
-      <FadeIn delay={0} y={-20}>
-        <nav 
-          className="flex justify-center sm:justify-between flex-wrap gap-4 pt-6 px-4 sm:px-10"
+    <nav
+      className="flex justify-center sm:justify-between flex-wrap gap-4 pt-6 px-4 sm:px-10"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: "rgba(255, 255, 255, 0.45)", // Liquid milky glass
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.9)",
+        borderLeft: "1px solid rgba(255, 255, 255, 0.5)",
+        borderRight: "1px solid rgba(255, 255, 255, 0.5)",
+        boxShadow: "0 10px 40px rgba(124, 58, 237, 0.1), inset 0 2px 5px rgba(255, 255, 255, 1)",
+        borderBottomLeftRadius: "30px",
+        borderBottomRightRadius: "30px",
+        margin: "0 1.5rem",
+        paddingBottom: "1.5rem"
+      }}
+    >
+      {["About", "Skills", "Projects", "Contact"].map((link) => (
+        <a
+          key={link}
+          href={`#${link.toLowerCase()}`}
+          className="nav-roll-link"
           style={{
-            background: "var(--nav-bg)",
-            backdropFilter: "var(--nav-backdrop)",
-            WebkitBackdropFilter: "var(--nav-backdrop)",
-            borderBottom: "1px solid var(--nav-border)",
-            paddingBottom: "1.5rem",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)"
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+            fontSize: "clamp(0.75rem, 1.4vw, 1.4rem)",
+            color: "var(--text-primary)",
+            textShadow: "0 2px 10px rgba(255,255,255,0.8)"
           }}
         >
-          {["About", "Skills", "Projects", "Contact"].map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
-              className="nav-link"
-              style={{
-                fontWeight: 500,
-                textTransform: "uppercase",
-                letterSpacing: "0.12em",
-                fontSize: "clamp(0.75rem, 1.4vw, 1.4rem)",
-                textDecoration: "none",
-              }}
-            >
-              {link}
-            </a>
-          ))}
-        </nav>
-      </FadeIn>
-    </div>
+          {/* Invisible placeholder to define container width */}
+          <span className="nav-roll-placeholder">{link}</span>
+
+          {/* Default state text */}
+          <span className="nav-roll-text">{link}</span>
+
+          {/* Hover state duplicate text */}
+          <span className="nav-roll-duplicate" style={{ color: "var(--accent)" }}>{link}</span>
+        </a>
+      ))}
+    </nav>
   );
 }
 
@@ -353,15 +626,19 @@ function HeroSection() {
             lineHeight: 0.9,
             fontSize: "clamp(4rem, 16vw, 300px)",
             marginTop: "clamp(-0.5rem, -1vw, -2rem)",
-            wordBreak: "break-word",
+            textAlign: "center"
           }}
         >
-          I'M SOURABH
+          {"I'M SOURABH".split("").map((char, index) => (
+            char === " " 
+              ? " " 
+              : <span key={index} className="hero-char">{char}</span>
+          ))}
         </h1>
       </FadeIn>
 
       {/* Center avatar */}
-      <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
+      <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
         <FadeIn delay={0.6} y={30}>
           <div className="pointer-events-auto">
             <Magnet padding={150} strength={3}>
@@ -377,12 +654,59 @@ function HeroSection() {
 
       {/* Bottom Bar */}
       <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center sm:items-end px-4 sm:px-10 pb-8 sm:pb-10 mt-auto relative z-20 gap-6 sm:gap-0">
-        <FadeIn delay={0.35} y={20}>
-          <p className="text-center sm:text-left font-medium uppercase tracking-[0.08em] leading-[1.6] text-[clamp(0.8rem,1.5vw,1.2rem)] max-w-[350px]" style={{ color: "var(--text-secondary)" }}>
-            FULL-STACK DEV · UI/UX<br />
-            DESIGNER · DSA MENTOR
-          </p>
-        </FadeIn>
+        <div className="flex flex-col sm:items-start items-center gap-3">
+          {["FULL-STACK DEV", "UI/UX DESIGNER", "DSA MENTOR"].map((role, i) => (
+            <motion.div
+              key={role}
+              initial={{ opacity: 0, y: 50, scale: 0.5 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 15,
+                delay: 0.5 + (i * 0.2)
+              }}
+            >
+              <motion.div
+                animate={{
+                  boxShadow: [
+                    "0px 0px 0px rgba(124, 58, 237, 0)",
+                    "0px 0px 20px rgba(124, 58, 237, 0.6)",
+                    "0px 0px 0px rgba(124, 58, 237, 0)"
+                  ],
+                  borderColor: [
+                    "var(--border)",
+                    "var(--accent)",
+                    "var(--border)"
+                  ],
+                  color: [
+                    "var(--text-secondary)",
+                    "var(--text-primary)",
+                    "var(--text-secondary)"
+                  ]
+                }}
+                transition={{
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 2 + (i * 0.3) // Cascade the glow effect after landing
+                }}
+                style={{
+                  padding: "0.4rem 1.25rem",
+                  borderRadius: "50px",
+                  border: "1px solid var(--border)",
+                  background: "var(--bg-surface)",
+                  fontSize: "clamp(0.7rem, 1.2vw, 0.85rem)",
+                  fontWeight: 600,
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                }}
+              >
+                {role}
+              </motion.div>
+            </motion.div>
+          ))}
+        </div>
 
         <FadeIn delay={0.5} y={20}>
           <ContactButton />
@@ -425,91 +749,12 @@ function AboutSection() {
         padding: "5rem 2rem",
         position: "relative",
         overflow: "hidden",
-        background: "var(--bg-secondary)",
+        background: "rgba(241, 240, 238, 0.4)",
+        backdropFilter: "blur(4px) saturate(120%)",
+        WebkitBackdropFilter: "blur(4px) saturate(120%)",
       }}
     >
-      {/* Decorative elements */}
-      <FadeIn delay={0.1} x={-80} y={0} duration={0.9} className="">
-        <motion.div style={{ position: "absolute", top: "6%", left: "3%", x: tlX, y: tlY, zIndex: 0 }}>
-          <motion.div
-            animate={{ y: [0, -15, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            whileHover={{ scale: 1.15, rotate: 10, filter: "drop-shadow(0 0 15px rgba(124,58,237,0.3))" }}
-            style={{ cursor: "pointer" }}
-          >
-            <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-              <circle cx="70" cy="70" r="60" stroke="var(--border-strong)" strokeWidth="1" />
-              <circle cx="70" cy="70" r="40" stroke="var(--accent-light)" strokeWidth="0.5" strokeDasharray="4 6" />
-              <circle cx="70" cy="70" r="20" fill="var(--accent-glow)" />
-              <circle cx="70" cy="20" r="5" fill="var(--accent)" />
-              <circle cx="70" cy="120" r="3" fill="var(--accent-dark)" />
-              <circle cx="20" cy="70" r="3" fill="var(--accent-dark)" />
-            </svg>
-          </motion.div>
-        </motion.div>
-      </FadeIn>
-
-      <FadeIn delay={0.15} x={80} y={0} duration={0.9}>
-        <motion.div style={{ position: "absolute", top: "6%", right: "3%", x: trX, y: trY, zIndex: 0 }}>
-          <motion.div
-            animate={{ y: [0, -20, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            whileHover={{ scale: 1.15, rotate: -5, filter: "drop-shadow(0 0 15px rgba(124,58,237,0.2))" }}
-            style={{ cursor: "pointer" }}
-          >
-            <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
-              <rect x="10" y="10" width="120" height="90" rx="8" stroke="var(--border)" strokeWidth="1" />
-              <rect x="10" y="10" width="120" height="18" rx="8" fill="var(--bg-surface)" />
-              <circle cx="26" cy="19" r="3" fill="var(--error)" />
-              <circle cx="40" cy="19" r="3" fill="var(--warning)" />
-              <circle cx="54" cy="19" r="3" fill="var(--success)" />
-              <rect x="22" y="38" width="50" height="4" rx="2" fill="var(--accent)" opacity="0.7" />
-              <rect x="22" y="50" width="80" height="4" rx="2" fill="var(--text-muted)" opacity="0.3" />
-              <rect x="22" y="62" width="60" height="4" rx="2" fill="var(--text-muted)" opacity="0.3" />
-              <rect x="34" y="74" width="40" height="4" rx="2" fill="var(--accent-light)" opacity="0.6" />
-            </svg>
-          </motion.div>
-        </motion.div>
-      </FadeIn>
-
-      <FadeIn delay={0.25} x={-80} y={0} duration={0.9}>
-        <motion.div style={{ position: "absolute", bottom: "10%", left: "5%", x: blX, y: blY, zIndex: 0 }}>
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            whileHover={{ scale: 1.15, rotate: 8, filter: "drop-shadow(0 0 15px rgba(124,58,237,0.3))" }}
-            style={{ cursor: "pointer" }}
-          >
-            <svg width="110" height="110" viewBox="0 0 110 110" fill="none">
-              <polygon points="55,5 105,30 105,80 55,105 5,80 5,30" stroke="var(--border-strong)" strokeWidth="1" fill="none" />
-              <polygon points="55,20 90,37.5 90,72.5 55,90 20,72.5 20,37.5" stroke="var(--accent)" strokeWidth="0.5" fill="var(--accent-glow)" />
-              <circle cx="55" cy="55" r="12" fill="var(--bg-primary)" stroke="var(--accent)" strokeWidth="1" />
-              <text x="55" y="59" textAnchor="middle" fill="var(--accent)" fontSize="10" fontFamily="monospace">&lt;/&gt;</text>
-            </svg>
-          </motion.div>
-        </motion.div>
-      </FadeIn>
-
-      <FadeIn delay={0.3} x={80} y={0} duration={0.9}>
-        <motion.div style={{ position: "absolute", bottom: "10%", right: "5%", x: brX, y: brY, zIndex: 0 }}>
-          <motion.div
-            animate={{ y: [0, -18, 0] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-            whileHover={{ scale: 1.15, rotate: -8, filter: "drop-shadow(0 0 15px rgba(124,58,237,0.2))" }}
-            style={{ cursor: "pointer" }}
-          >
-            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-              <rect x="15" y="55" width="90" height="50" rx="6" stroke="var(--border)" strokeWidth="1" fill="var(--bg-surface)" />
-              <rect x="35" y="45" width="50" height="20" rx="4" stroke="var(--border)" strokeWidth="1" fill="var(--bg-primary)" />
-              <rect x="50" y="105" width="20" height="12" rx="2" fill="var(--border-strong)" />
-              <rect x="30" y="117" width="60" height="3" rx="1.5" fill="var(--border-strong)" />
-              <rect x="22" y="62" width="40" height="3" rx="1.5" fill="var(--accent)" opacity="0.7" />
-              <rect x="22" y="72" width="60" height="3" rx="1.5" fill="var(--text-muted)" opacity="0.3" />
-              <rect x="22" y="82" width="50" height="3" rx="1.5" fill="var(--text-muted)" opacity="0.3" />
-            </svg>
-          </motion.div>
-        </motion.div>
-      </FadeIn>
+      <ParallaxBackground />
 
       {/* Heading */}
       <FadeIn delay={0} y={40}>
@@ -710,101 +955,109 @@ const PROJECTS = [
 ];
 
 function ProjectCard({ project, index, total, progress }) {
-  const targetScale = 1 - (total - 1 - index) * 0.05;
+  const targetScale = 1 - (total - 1 - index) * 0.04; // Slightly less scale down
   const scale = useTransform(progress, [index / total, 1], [1, targetScale]);
 
   return (
-    <div style={{ height: "85vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <motion.div
-        className="project-card"
-        style={{
-          scale,
-          position: "sticky",
-          top: `${96 + index * 28}px`,
-          width: "100%",
-          maxWidth: "900px",
-          borderRadius: "14px",
-          border: "0.5px solid var(--border)",
-          background: "var(--bg-surface)",
-          padding: "2rem 2.5rem",
-          willChange: "transform",
-        }}
-      >
-        {/* Top row */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "1.5rem" }}>
-            <span style={{
-              fontWeight: 900,
-              fontSize: "11px",
-              color: "var(--accent)",
-              letterSpacing: "0.1em",
-              lineHeight: 1,
-            }}>PROJECT {project.num}</span>
-            <div>
-              <p style={{ color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.1em", fontSize: "0.8rem", marginBottom: "0.25rem" }}>
-                {project.category}
-              </p>
-              <h3 style={{
-                color: "var(--text-primary)",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                fontSize: "clamp(1.2rem, 2.5vw, 2rem)",
-                letterSpacing: "-0.01em",
-              }}>{project.name}</h3>
-            </div>
-          </div>
-          <a
-            href={project.link}
-            style={{
-              borderRadius: "8px",
-              border: "0.5px solid var(--border)",
-              color: "var(--text-secondary)",
-              fontWeight: 500,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              padding: "0.5rem 1.5rem",
-              fontSize: "0.75rem",
-              textDecoration: "none",
-              background: "transparent",
-              transition: "background 0.2s ease",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "var(--bg-secondary)"}
-            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-          >
-            View Project
-          </a>
-        </div>
+    <motion.div
+      className="project-card"
+      style={{
+        scale,
+        rotate: index % 2 === 0 ? -1.5 : 1.5,
+        x: index % 2 === 0 ? -10 : 10,
+        position: "sticky",
+        top: `calc(10vh + ${index * 35}px)`,
+        width: "100%",
+        maxWidth: "1100px",
+        height: "80vh",
+        marginBottom: index === total - 1 ? "0" : "60vh", // Adds scroll space before the next card comes up
+        marginInline: "auto", // Center horizontally
+        borderRadius: "24px",
+        border: "1px solid var(--border)",
+        boxShadow: "0 -10px 30px rgba(0,0,0,0.05)",
+        background: "var(--bg-surface)",
+        padding: "2rem",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        willChange: "transform",
+      }}
+    >
+      <div style={{ maxWidth: "800px", width: "100%", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <span style={{
+          fontWeight: 900,
+          fontSize: "12px",
+          color: "var(--accent)",
+          letterSpacing: "0.2em",
+          marginBottom: "1.5rem",
+          display: "block"
+        }}>PROJECT {project.num} • {project.category}</span>
 
-        {/* Description */}
+        <h3 style={{
+          color: "var(--text-primary)",
+          fontWeight: 700,
+          textTransform: "uppercase",
+          fontSize: "clamp(2rem, 6vw, 4rem)",
+          letterSpacing: "-0.02em",
+          marginBottom: "2rem",
+          lineHeight: 1.1
+        }}>{project.name}</h3>
+
         <p style={{
           color: "var(--text-secondary)",
           fontWeight: 300,
           lineHeight: 1.7,
-          fontSize: "clamp(0.85rem, 1.5vw, 1.1rem)",
-          maxWidth: "600px",
-          marginBottom: "1.5rem",
+          fontSize: "clamp(1rem, 2vw, 1.25rem)",
+          maxWidth: "650px",
+          marginBottom: "3rem",
         }}>
           {project.desc}
         </p>
 
-        {/* Tech chips */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.75rem", marginBottom: "3rem" }}>
           {project.tech.map((t) => (
             <span key={t} style={{
               background: "var(--accent-glow)",
-              border: "0.5px solid var(--accent-light)",
+              border: "1px solid var(--accent-light)",
               color: "var(--accent-dark)",
               borderRadius: "9999px",
-              padding: "0.25rem 0.85rem",
-              fontSize: "0.75rem",
+              padding: "0.5rem 1.2rem",
+              fontSize: "0.85rem",
               fontWeight: 500,
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
             }}>{t}</span>
           ))}
         </div>
-      </motion.div>
-    </div>
+
+        <a
+          href={project.link}
+          style={{
+            display: "inline-block",
+            borderRadius: "50px",
+            border: "1px solid var(--border)",
+            color: "var(--text-secondary)",
+            fontWeight: 500,
+            textTransform: "uppercase",
+            letterSpacing: "0.15em",
+            padding: "1rem 2.5rem",
+            fontSize: "0.85rem",
+            textDecoration: "none",
+            background: "transparent",
+            transition: "background 0.2s ease, color 0.2s ease",
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = "var(--bg-secondary)";
+            e.currentTarget.style.color = "var(--text-primary)";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "var(--text-secondary)";
+          }}
+        >
+          View Project
+        </a>
+      </div>
+    </motion.div>
   );
 }
 
@@ -817,7 +1070,9 @@ function ProjectsSection() {
       id="projects"
       ref={containerRef}
       style={{
-        background: "var(--bg-secondary)",
+        background: "rgba(241, 240, 238, 0.4)",
+        backdropFilter: "blur(4px) saturate(120%)",
+        WebkitBackdropFilter: "blur(4px) saturate(120%)",
         borderRadius: "50px 50px 0 0",
         marginTop: "-3rem",
         position: "relative",
@@ -825,7 +1080,7 @@ function ProjectsSection() {
         padding: "5rem 2rem 2rem",
       }}
     >
-      <FadeIn delay={0} y={40}>
+      <FadeIn delay={0} y={40} className="mb-16">
         <h2
           style={{
             fontWeight: 900,
@@ -835,7 +1090,7 @@ function ProjectsSection() {
             color: "var(--text-primary)",
             textAlign: "center",
             fontSize: "clamp(3rem, 12vw, 140px)",
-            marginBottom: "4rem",
+            marginBottom: "4rem"
           }}
         >
           Projects
