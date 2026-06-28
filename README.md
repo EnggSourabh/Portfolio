@@ -1,16 +1,66 @@
-# React + Vite
+# Sourabh Meena - Interactive Portfolio & Web Experience
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Welcome to the source code for my personal portfolio! This is a premium, highly interactive web application built with a stunning glassmorphism design language, micro-animations, and a completely bespoke **Interactive Resume** module.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* **Premium Glassmorphism Design:** A cohesive aesthetic utilizing `backdrop-filter: blur(20px)`, subtle gradients, and dark-mode optimization across all components.
+* **Integrated Interactive Resume:** Replaced the traditional PDF download button with a full-screen, split-layout interactive modal.
+  * **Intelligent Search Engine:** Real-time regex highlighting to instantly find skills (e.g., "React", "AI") across experience, projects, and certifications.
+  * **Scroll-Spy Navigation:** A sticky sidebar that tracks your position and allows instant jumping to sections.
+  * **Custom Micro-Interactions:** Custom `framer-motion` physics for hovering over timeline dots, technology pills, and project cards.
+* **3D Globe Visualizer:** An interactive, drag-to-rotate globe to visually represent global reach and technologies.
+* **Fully Responsive:** Carefully crafted layouts that scale elegantly from ultrawide desktop monitors down to mobile devices.
 
-## React Compiler
+## 💻 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Core:** React 18, JavaScript (ES6+), Vite
+* **Styling:** Vanilla CSS (Glassmorphism, CSS Variables, Custom Animations)
+* **Animation Engine:** Framer Motion (`useScroll`, `AnimatePresence`, spring physics)
+* **Icons:** Lucide React
 
-## Expanding the Oxlint configuration
+## 📂 Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```text
+src/
+├── assets/          # Static assets (images, pdfs)
+├── components/      # Reusable React components
+│   ├── GlobeSection.jsx
+│   ├── InteractiveBackground.jsx
+│   ├── InteractiveResume.jsx  # Complex resume modal engine
+│   └── ...
+├── App.jsx          # Main application router and view structure
+├── data.jsx         # Centralized data store (Projects, Experience, Skills, Certs)
+├── index.css        # Global CSS variables, utility classes, and glassmorphism styling
+└── main.jsx         # React application entry point
+```
+
+## 🛠️ How to Run Locally
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/EnggSourabh/Portfolio.git
+   cd Portfolio
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+## 🌐 Live Preview
+
+You can test out the interactive features—especially the "View Resume" functionality—directly by running the local server.
+
+---
+*Designed & Engineered by Sourabh Meena*
