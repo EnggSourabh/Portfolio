@@ -630,8 +630,8 @@ function HeroSection() {
           }}
         >
           {"I'M SOURABH".split("").map((char, index) => (
-            char === " " 
-              ? " " 
+            char === " "
+              ? " "
               : <span key={index} className="hero-char">{char}</span>
           ))}
         </h1>
