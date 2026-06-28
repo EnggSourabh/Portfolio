@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import avatarImage from "./assets/avatar.png";
+import avatar2Image from "./assets/avatar2.png";
 import bgImage from "./assets/1.png";
 import InteractiveBackground from "./components/InteractiveBackground";
 
@@ -400,6 +401,7 @@ function ContactButton() {
   return (
     <button
       className="contact-btn"
+      onClick={(e) => handleSmoothScroll(e, "contact")}
       style={{
         cursor: "pointer",
         fontFamily: "inherit",
@@ -553,6 +555,38 @@ function SkillsMarquee() {
   );
 }
 
+// ─── SMOOTH SCROLL LOGIC ─────────────────────────────────────────────────────
+const easeInOutQuint = (t) => t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+
+const handleSmoothScroll = (e, targetId) => {
+  e.preventDefault();
+  const target = document.getElementById(targetId);
+  if (!target) return;
+
+  const targetPosition = target.getBoundingClientRect().top + window.scrollY;
+  const startPosition = window.scrollY;
+  const distance = targetPosition - startPosition;
+  const duration = 1200; // 1.2s cinematic Apple-like easing
+  let start = null;
+
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = timestamp - start;
+    const percent = Math.min(progress / duration, 1);
+
+    window.scrollTo(0, startPosition + distance * easeInOutQuint(percent));
+
+    if (progress < duration) {
+      window.requestAnimationFrame(step);
+    } else {
+      // Ensure we hit the exact target position at the end
+      window.scrollTo(0, targetPosition);
+    }
+  };
+
+  window.requestAnimationFrame(step);
+};
+
 // ─── NAVBAR ──────────────────────────────────────────────────────────────────
 function NavBar() {
   return (
@@ -581,6 +615,7 @@ function NavBar() {
         <a
           key={link}
           href={`#${link.toLowerCase()}`}
+          onClick={(e) => handleSmoothScroll(e, link.toLowerCase())}
           className="nav-roll-link"
           style={{
             fontWeight: 600,
@@ -655,7 +690,7 @@ function HeroSection() {
       {/* Bottom Bar */}
       <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center sm:items-end px-4 sm:px-10 pb-8 sm:pb-10 mt-auto relative z-20 gap-6 sm:gap-0">
         <div className="flex flex-col sm:items-start items-center gap-3">
-          {["FULL-STACK DEV", "UI/UX DESIGNER", "DSA MENTOR"].map((role, i) => (
+          {["FULL-STACK ENGINEER", "UI/UX DESIGNER", "FREELANCER"].map((role, i) => (
             <motion.div
               key={role}
               initial={{ opacity: 0, y: 50, scale: 0.5 }}
@@ -776,7 +811,7 @@ function AboutSection() {
 
       {/* Animated paragraph */}
       <AnimatedText
-        text="Third-year B.Tech IT student building production-grade full-stack applications with React, Node.js, and AI integration. I mentor 100+ students in DSA, lead developer communities, and ship real products that solve real problems. Let's build something powerful together!"
+        text="Full-Stack Developer, Freelancer, and AI enthusiast building scalable web applications with modern technologies. Passionate about crafting intuitive user experiences and turning ideas into production-ready digital products."
         style={{
           color: "var(--text-secondary)",
           fontWeight: 500,
@@ -800,12 +835,12 @@ const SERVICES = [
   {
     num: "01",
     name: "Full-Stack Development",
-    desc: "End-to-end web apps using React.js, Node.js, Express, and MongoDB — from REST APIs to real-time features with WebRTC and Socket.io.",
+    desc: "Designing and developing scalable web applications using React, Next.js, Node.js, Express, MongoDB, and modern engineering practices.",
   },
   {
     num: "02",
     name: "UI/UX Design",
-    desc: "Clean, conversion-focused interfaces in Figma — user flows, component systems, and pixel-perfect handoffs for seamless dev collaboration.",
+    desc: "Crafting intuitive user experiences with clean interfaces, thoughtful interactions, responsive layouts, and product-first design principles.",
   },
   {
     num: "03",
@@ -814,13 +849,13 @@ const SERVICES = [
   },
   {
     num: "04",
-    name: "DSA Mentorship",
-    desc: "Structured coaching in Data Structures & Algorithms using Java — doubt sessions, competitive problem breakdowns, and placement prep.",
+    name: "Software Engineering",
+    desc: "Strong understanding of algorithms, databases, object-oriented programming, system architecture, and scalable backend development.",
   },
   {
     num: "05",
-    name: "Hackathon Strategy",
-    desc: "Team formation, ideation, and rapid prototyping for hackathon environments — from concept to live demo under tight deadlines.",
+    name: "Product Development",
+    desc: "Transforming ideas into production-ready products through planning, rapid prototyping, iterative development, deployment, and continuous improvement.",
   },
 ];
 
@@ -927,35 +962,152 @@ function ServicesSection() {
 }
 
 // ─── PROJECTS SECTION ────────────────────────────────────────────────────────
+const InterviewAIGraphic = () => (
+  <div style={{ position: "relative", width: "100%", height: "100%", minHeight: "350px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    {/* Background Panel */}
+    <div style={{ position: "absolute", top: "10%", left: "5%", right: "5%", bottom: "10%", background: "var(--bg-secondary)", borderRadius: "24px", border: "1px solid var(--border-strong)", opacity: 0.3 }} />
+
+    {/* Floating Video Box */}
+    <motion.div
+      animate={{ y: [-5, 5, -5] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      style={{ position: "absolute", top: "15%", left: "10%", width: "120px", height: "80px", background: "var(--bg-surface)", borderRadius: "12px", border: "1px solid var(--border)", boxShadow: "0 10px 20px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem" }}
+    >
+      👤
+    </motion.div>
+
+    {/* Floating Analysis Badge */}
+    <motion.div
+      animate={{ y: [5, -5, 5] }}
+      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      style={{ position: "absolute", bottom: "20%", right: "10%", padding: "0.75rem 1.25rem", background: "#F3F0FF", color: "#5B21B6", borderRadius: "50px", fontWeight: 600, fontSize: "0.75rem", boxShadow: "0 5px 15px rgba(124,58,237,0.15)", border: "1px solid #DDD6FE" }}
+    >
+      ✨ Expresson: Confident
+    </motion.div>
+
+    {/* Central Orb */}
+    <div style={{ position: "relative", width: "140px", height: "140px", zIndex: 10 }}>
+      <motion.div
+        animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        style={{ position: "absolute", inset: "-20px", borderRadius: "50%", border: "2px solid #A78BFA" }}
+      />
+      <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #4C1D95)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem", boxShadow: "0 0 40px rgba(124, 58, 237, 0.4)" }}>
+        🎙️
+      </div>
+    </div>
+  </div>
+);
+
+const SpotfixGraphic = () => (
+  <div style={{ position: "relative", width: "100%", height: "100%", minHeight: "350px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    {/* Grid Background */}
+    <div style={{ position: "absolute", inset: "10%", backgroundImage: "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)", backgroundSize: "30px 30px", opacity: 0.3, borderRadius: "20px" }} />
+
+    {/* Floating Location Badge */}
+    <motion.div
+      animate={{ y: [-5, 5, -5] }}
+      transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+      style={{ position: "absolute", top: "20%", right: "15%", padding: "0.6rem 1rem", background: "#ECFDF5", color: "#065F46", borderRadius: "8px", fontWeight: 600, fontSize: "0.75rem", boxShadow: "0 5px 15px rgba(5,150,105,0.1)", border: "1px solid #A7F3D0" }}
+    >
+      GPS: 22.7°N, 75.8°E
+    </motion.div>
+
+    {/* Floating Image Mock */}
+    <motion.div
+      animate={{ y: [5, -5, 5] }}
+      transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+      style={{ position: "absolute", bottom: "15%", left: "15%", width: "100px", height: "70px", background: "var(--bg-surface)", borderRadius: "12px", border: "2px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem" }}
+    >
+      📸
+    </motion.div>
+
+    {/* Central Pin */}
+    <div style={{ position: "relative", width: "130px", height: "130px", zIndex: 10 }}>
+      <motion.div
+        animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+        style={{ position: "absolute", inset: "-10px", borderRadius: "50%", background: "rgba(16, 185, 129, 0.15)" }}
+      />
+      <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "linear-gradient(135deg, #059669, #064E3B)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem", boxShadow: "0 0 40px rgba(5, 150, 105, 0.4)" }}>
+        📍
+      </div>
+    </div>
+  </div>
+);
+
+const FindMateGraphic = () => (
+  <div style={{ position: "relative", width: "100%", height: "100%", minHeight: "350px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    {/* Abstract Connecting Lines */}
+    <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.2 }} viewBox="0 0 100 100" preserveAspectRatio="none">
+      <line x1="20" y1="20" x2="50" y2="50" stroke="var(--text-primary)" strokeWidth="0.5" strokeDasharray="2,2" />
+      <line x1="80" y1="30" x2="50" y2="50" stroke="var(--text-primary)" strokeWidth="0.5" strokeDasharray="2,2" />
+      <line x1="30" y1="80" x2="50" y2="50" stroke="var(--text-primary)" strokeWidth="0.5" strokeDasharray="2,2" />
+    </svg>
+
+    {/* Floating Avatars */}
+    <motion.div animate={{ scale: [0.9, 1.1, 0.9] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} style={{ position: "absolute", top: "15%", left: "15%", width: "50px", height: "50px", borderRadius: "50%", background: "var(--bg-secondary)", border: "2px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem" }}>🧑‍💻</motion.div>
+    <motion.div animate={{ scale: [0.9, 1.1, 0.9] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} style={{ position: "absolute", top: "20%", right: "15%", width: "45px", height: "45px", borderRadius: "50%", background: "var(--bg-secondary)", border: "2px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>👩‍🎨</motion.div>
+    <motion.div animate={{ scale: [0.9, 1.1, 0.9] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }} style={{ position: "absolute", bottom: "15%", left: "25%", width: "40px", height: "40px", borderRadius: "50%", background: "var(--bg-secondary)", border: "2px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>👨‍💼</motion.div>
+
+    {/* Match Badge */}
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      style={{ position: "absolute", bottom: "25%", right: "15%", padding: "0.5rem 1rem", background: "#FDF2F8", color: "#BE185D", borderRadius: "50px", fontWeight: 700, fontSize: "0.85rem", boxShadow: "0 5px 15px rgba(236,72,153,0.15)", border: "1px solid #FBCFE8", zIndex: 20 }}
+    >
+      🔥 98% Match
+    </motion.div>
+
+    {/* Central Node */}
+    <div style={{ position: "relative", width: "130px", height: "130px", zIndex: 10 }}>
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 20, ease: "linear", repeat: Infinity }}
+        style={{ position: "absolute", inset: "-15px", borderRadius: "30%", border: "1px solid rgba(236, 72, 153, 0.4)" }}
+      />
+      <div style={{ position: "absolute", inset: 0, borderRadius: "24px", background: "linear-gradient(135deg, #EC4899, #831843)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem", transform: "rotate(45deg)", boxShadow: "0 0 40px rgba(236, 72, 153, 0.4)" }}>
+        <div style={{ transform: "rotate(-45deg)" }}>🤝</div>
+      </div>
+    </div>
+  </div>
+);
+
 const PROJECTS = [
   {
     num: "01",
     name: "InterviewAI",
     category: "AI / Full-Stack",
-    desc: "Real-time mock interview platform with WebRTC video, Gemini AI expression analysis, and performance analytics dashboards.",
+    desc: "An AI-powered mock interview platform that simulates technical interviews using live video, real-time communication, and intelligent performance analysis to help candidates prepare more effectively.",
     tech: ["React.js", "Node.js", "MongoDB", "Gemini API", "WebRTC", "Socket.io"],
     link: "#",
+    graphic: <InterviewAIGraphic />,
+    accent: "rgba(124, 58, 237, 0.15)"
   },
   {
     num: "02",
-    name: "CivicConnect",
+    name: "Spotfix",
     category: "PWA / AI",
-    desc: "Progressive Web App for civic issue reporting via photo/voice input with GPS tagging and real-time tracking dashboards.",
+    desc: "A civic issue reporting platform that enables citizens to report problems using AI-assisted image and voice analysis, GPS location, and real-time complaint tracking.",
     tech: ["React.js", "Node.js", "MongoDB", "GPS API", "PWA"],
     link: "#",
+    graphic: <SpotfixGraphic />,
+    accent: "rgba(16, 185, 129, 0.12)"
   },
   {
     num: "03",
-    name: "Hackathon Matcher",
+    name: "FindMate",
     category: "AI / Platform",
-    desc: "AI-powered teammate recommender using role-based matching and profile similarity scoring. Built smart team composition engine with FastAPI.",
+    desc: "An AI-powered hackathon teammate recommendation platform that forms balanced teams through intelligent skill analysis, role matching, and compatibility scoring.",
     tech: ["React.js", "FastAPI", "MongoDB", "Python", "AI"],
     link: "#",
+    graphic: <FindMateGraphic />,
+    accent: "rgba(236, 72, 153, 0.12)"
   },
 ];
 
 function ProjectCard({ project, index, total, progress }) {
-  const targetScale = 1 - (total - 1 - index) * 0.04; // Slightly less scale down
+  const targetScale = 1 - (total - 1 - index) * 0.04;
   const scale = useTransform(progress, [index / total, 1], [1, targetScale]);
 
   return (
@@ -963,28 +1115,47 @@ function ProjectCard({ project, index, total, progress }) {
       className="project-card"
       style={{
         scale,
-        rotate: index % 2 === 0 ? -1.5 : 1.5,
-        x: index % 2 === 0 ? -10 : 10,
+        rotate: index % 2 === 0 ? -1 : 1,
+        x: index % 2 === 0 ? -5 : 5,
         position: "sticky",
         top: `calc(10vh + ${index * 35}px)`,
         width: "100%",
         maxWidth: "1100px",
-        height: "80vh",
-        marginBottom: index === total - 1 ? "0" : "60vh", // Adds scroll space before the next card comes up
-        marginInline: "auto", // Center horizontally
-        borderRadius: "24px",
+        minHeight: "75vh",
+        marginBottom: index === total - 1 ? "0" : "60vh",
+        marginInline: "auto",
+        borderRadius: "32px",
         border: "1px solid var(--border)",
-        boxShadow: "0 -10px 30px rgba(0,0,0,0.05)",
+        boxShadow: "0 10px 40px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02)",
         background: "var(--bg-surface)",
-        padding: "2rem",
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        overflow: "hidden",
         willChange: "transform",
       }}
     >
-      <div style={{ maxWidth: "800px", width: "100%", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      {/* Decorative Radial Gradient Background */}
+      <div style={{
+        position: "absolute",
+        top: "-20%", right: "-10%",
+        width: "80%", height: "140%",
+        background: `radial-gradient(ellipse at center, ${project.accent}, transparent 60%)`,
+        zIndex: 0,
+        pointerEvents: "none"
+      }} />
+
+      {/* Content - Left Side */}
+      <div style={{
+        flex: "1 1 400px",
+        padding: "clamp(2rem, 5vw, 4rem)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        position: "relative",
+        zIndex: 1
+      }}>
         <span style={{
           fontWeight: 900,
           fontSize: "12px",
@@ -996,30 +1167,28 @@ function ProjectCard({ project, index, total, progress }) {
 
         <h3 style={{
           color: "var(--text-primary)",
-          fontWeight: 700,
+          fontWeight: 800,
           textTransform: "uppercase",
-          fontSize: "clamp(2rem, 6vw, 4rem)",
-          letterSpacing: "-0.02em",
-          marginBottom: "2rem",
-          lineHeight: 1.1
+          fontSize: "clamp(2.5rem, 5vw, 4rem)",
+          letterSpacing: "-0.03em",
+          marginBottom: "1.5rem",
+          lineHeight: 1.05
         }}>{project.name}</h3>
 
         <p style={{
           color: "var(--text-secondary)",
-          fontWeight: 300,
+          fontWeight: 400,
           lineHeight: 1.7,
-          fontSize: "clamp(1rem, 2vw, 1.25rem)",
-          maxWidth: "650px",
-          marginBottom: "3rem",
+          fontSize: "clamp(1rem, 1.2vw, 1.15rem)",
+          marginBottom: "2.5rem",
+          maxWidth: "450px"
         }}>
           {project.desc}
         </p>
 
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.75rem", marginBottom: "3rem" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginBottom: "3rem" }}>
           {project.tech.map((t) => (
             <span key={t} style={{
-              background: "var(--accent-glow)",
-              border: "1px solid var(--accent-light)",
               color: "var(--accent-dark)",
               borderRadius: "9999px",
               padding: "0.5rem 1.2rem",
@@ -1111,11 +1280,41 @@ function Footer() {
       id="contact"
       style={{
         background: "var(--footer-bg)",
-        padding: "5rem 2.5rem 3rem",
+        padding: "8rem 2.5rem 3rem", // Increased top padding to accommodate the avatar
         borderTop: "1px solid var(--footer-border)",
         textAlign: "center",
+        position: "relative",
       }}
     >
+      {/* Floating Interactive Avatar 2 */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: "clamp(2rem, 8vw, 6rem)", // Positioned securely on the left
+        transform: "translate(0, -50%)",
+        zIndex: 20
+      }}>
+        <Magnet padding={120} strength={1.5}>
+          <motion.img
+            src={avatar2Image}
+            alt="Floating Avatar 2"
+            animate={{ y: [-15, 15, -15], rotate: [-2, 2, -2] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            whileHover={{
+              rotate: 5,
+              y: -20
+            }}
+            style={{
+              width: "clamp(180px, 25vw, 300px)",
+              height: "auto",
+              cursor: "grab",
+              filter: "drop-shadow(0 0 25px rgba(10, 10, 15, 0.95)) drop-shadow(0 15px 25px rgba(0,0,0,0.6))",
+              willChange: "transform, filter"
+            }}
+          />
+        </Magnet>
+      </div>
+
       <FadeIn delay={0} y={30}>
         <h2
           className="hero-heading"
