@@ -7,6 +7,7 @@ import avatar2Image from "./assets/avatar2.png";
 import bgImage from "./assets/1.png";
 import InteractiveBackground from "./components/InteractiveBackground";
 import GlobeSection from "./components/GlobeSection";
+import resumePdf from "./assets/resume.pdf";
 
 // ─── PRELOADER ──────────────────────────────────────────────────────────────
 function Preloader({ onComplete }) {
@@ -435,7 +436,7 @@ function Magnet({ children, padding = 100, strength = 3 }) {
 }
 
 // ─── CONTACT BUTTON ──────────────────────────────────────────────────────────
-function ContactButton({ label = "Download Resume", onClick, href }) {
+function ContactButton({ label = "Download Resume", onClick, href, download }) {
   const baseStyle = {
     cursor: "pointer",
     fontFamily: "inherit",
@@ -450,7 +451,7 @@ function ContactButton({ label = "Download Resume", onClick, href }) {
 
   if (href) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className="contact-btn" style={baseStyle}>
+      <a href={href} target="_blank" rel="noopener noreferrer" download={download} className="contact-btn" style={baseStyle}>
         {label}
       </a>
     );
@@ -812,7 +813,7 @@ function HeroSection() {
         </motion.div>
 
         <FadeIn delay={0.5} y={20}>
-          <ContactButton />
+          <ContactButton href={resumePdf} download="Sourabh_Meena_Resume.pdf" />
         </FadeIn>
       </div>
     </section>
