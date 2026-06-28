@@ -1144,6 +1144,20 @@ function ProjectCard({ project, index, total, progress }) {
           View Project
         </a>
       </div>
+
+      {/* Graphic - Right Side */}
+      <div style={{
+        flex: "1 1 500px",
+        position: "relative",
+        minHeight: "400px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
+        zIndex: 1
+      }}>
+        {project.graphic}
+      </div>
     </motion.div>
   );
 }

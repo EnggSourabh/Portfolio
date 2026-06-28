@@ -119,6 +119,33 @@ export const FindMateGraphic = () => (
   </div>
 );
 
+export const BloodBankGraphic = () => (
+  <div style={{ position: "relative", width: "100%", height: "100%", minHeight: "350px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.2 }} viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path d="M 0 50 Q 25 20, 50 50 T 100 50" fill="none" stroke="var(--text-primary)" strokeWidth="0.5" strokeDasharray="2,2" />
+    </svg>
+    <motion.div animate={{ scale: [0.9, 1.1, 0.9] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} style={{ position: "absolute", top: "20%", left: "20%", width: "50px", height: "50px", borderRadius: "50%", background: "var(--bg-secondary)", border: "2px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem" }}>🩸</motion.div>
+    <motion.div animate={{ scale: [0.9, 1.1, 0.9] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} style={{ position: "absolute", bottom: "20%", right: "20%", width: "45px", height: "45px", borderRadius: "50%", background: "var(--bg-secondary)", border: "2px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem" }}>🏥</motion.div>
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      style={{ position: "absolute", top: "15%", right: "15%", padding: "0.5rem 1rem", background: "#FEF2F2", color: "#B91C1C", borderRadius: "50px", fontWeight: 700, fontSize: "0.85rem", boxShadow: "0 5px 15px rgba(220,38,38,0.15)", border: "1px solid #FECACA", zIndex: 20 }}
+    >
+      ❤️ Urgent Need
+    </motion.div>
+    <div style={{ position: "relative", width: "130px", height: "130px", zIndex: 10 }}>
+      <motion.div
+        animate={{ scale: [1, 1.2, 1] }}
+        transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
+        style={{ position: "absolute", inset: "-15px", borderRadius: "50%", border: "2px solid rgba(220, 38, 38, 0.4)" }}
+      />
+      <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "linear-gradient(135deg, #EF4444, #7F1D1D)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem", boxShadow: "0 0 40px rgba(220, 38, 38, 0.4)" }}>
+        <div>❤️</div>
+      </div>
+    </div>
+  </div>
+);
+
 export const PROJECTS = [
   {
     num: "01",
@@ -149,6 +176,16 @@ export const PROJECTS = [
     link: "#",
     graphic: <FindMateGraphic />,
     accent: "rgba(236, 72, 153, 0.12)"
+  },
+  {
+    num: "04",
+    name: "RAKT SETU",
+    category: "Java Web App",
+    desc: "A web-based Blood Bank Management System developed to simplify blood donor registration, blood search, and donor management, featuring a modern glassmorphism UI.",
+    tech: ["Java", "JSP", "MySQL", "HTML/CSS", "Tomcat"],
+    link: "#",
+    graphic: <BloodBankGraphic />,
+    accent: "rgba(220, 38, 38, 0.12)"
   }
 ];
 
