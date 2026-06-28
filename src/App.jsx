@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, lazy, Suspense } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { SERVICES, PROJECTS, TECH_ICONS } from "./data";
 import { Mail, Code } from "lucide-react";
@@ -8,6 +8,8 @@ import bgImage from "./assets/1.png";
 import InteractiveBackground from "./components/InteractiveBackground";
 import GlobeSection from "./components/GlobeSection";
 import resumePdf from "./assets/resume.pdf";
+
+const InteractiveResume = lazy(() => import("./components/InteractiveResume"));
 
 // ─── PRELOADER ──────────────────────────────────────────────────────────────
 function Preloader({ onComplete }) {
@@ -436,7 +438,7 @@ function Magnet({ children, padding = 100, strength = 3 }) {
 }
 
 // ─── CONTACT BUTTON ──────────────────────────────────────────────────────────
-function ContactButton({ label = "Download Resume", onClick, href, download }) {
+function ContactButton({ label = "View Resume", onClick, href, download }) {
   const baseStyle = {
     cursor: "pointer",
     fontFamily: "inherit",
@@ -700,6 +702,8 @@ function NavBar() {
 
 // ─── HERO SECTION ────────────────────────────────────────────────────────────
 function HeroSection() {
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
+
   return (
     <section
       className="h-screen flex flex-col relative overflow-x-clip"
@@ -813,9 +817,12 @@ function HeroSection() {
         </motion.div>
 
         <FadeIn delay={0.5} y={20}>
-          <ContactButton href={resumePdf} download="Sourabh_Meena_Resume.pdf" />
+          <ContactButton onClick={() => setIsResumeOpen(true)} />
         </FadeIn>
       </div>
+      <Suspense fallback={null}>
+        <InteractiveResume isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />
+      </Suspense>
     </section>
   );
 }

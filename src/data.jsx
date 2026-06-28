@@ -173,7 +173,7 @@ export const PROJECTS = [
     category: "AI / Platform",
     desc: "An AI-powered hackathon teammate recommendation platform that forms balanced teams through intelligent skill analysis, role matching, and compatibility scoring.",
     tech: ["React.js", "FastAPI", "MongoDB", "Python", "AI"],
-    link: "#",
+    link: "https://github.com/EnggSourabh/FindMates.git",
     graphic: <FindMateGraphic />,
     accent: "rgba(236, 72, 153, 0.12)"
   },
@@ -183,7 +183,7 @@ export const PROJECTS = [
     category: "Java Web App",
     desc: "A web-based Blood Bank Management System developed to simplify blood donor registration, blood search, and donor management, featuring a modern glassmorphism UI.",
     tech: ["Java", "JSP", "MySQL", "HTML/CSS", "Tomcat"],
-    link: "#",
+    link: "https://github.com/EnggSourabh/BloodBankSystem.git",
     graphic: <BloodBankGraphic />,
     accent: "rgba(220, 38, 38, 0.12)"
   }
@@ -228,3 +228,110 @@ export const TECH_ICONS = {
   "HTML/CSS": <Paintbrush size={20} strokeWidth={1.5} />,
   "Tomcat": <Server size={20} strokeWidth={1.5} />
 };
+
+export const EXPERIENCE = [
+  {
+    role: "Freelance Full-Stack Developer",
+    org: "Self-Employed",
+    duration: "2023 - 2026",
+    summary: "Designing and developing scalable web applications for diverse clients, focusing on intuitive UX and robust backend architectures.",
+    responsibilities: [
+      "Built full-stack applications using React, Node.js, and MongoDB.",
+      "Integrated AI features using Gemini API for smart user interactions.",
+      "Optimized database queries and improved page load speeds by 40%."
+    ],
+    tech: ["React.js", "Node.js", "MongoDB", "Tailwind CSS"]
+  },
+  {
+    role: "Campus Ambassador",
+    org: "IIT Delhi EDC",
+    duration: "Dec 2025 - Jan 2026",
+    summary: "Promoted entrepreneurship and innovation among students.",
+    responsibilities: [
+      "Coordinated flagship entrepreneurship events.",
+      "Managed digital presence and outreach."
+    ],
+    tech: ["HTML/CSS", "Leadership"]
+  },
+  {
+    role: "Teaching Assistant Internship",
+    org: "Jainemo Private Limited",
+    duration: "Aug 2025 - Dec 2025",
+    summary: "Mentored students in Data Structures, Algorithms, and Web Development.",
+    responsibilities: [
+      "Conducted weekly doubt-clearing sessions for 50+ students.",
+      "Evaluated assignments and provided constructive feedback on code quality."
+    ],
+    tech: ["Java", "C++", "DSA"]
+  },
+  {
+    role: "Core Member",
+    org: "Google Student Developer Community",
+    duration: "2024 - 2025",
+    summary: "Collaborated with peers to organize tech workshops and hackathons.",
+    responsibilities: [
+      "Organized web development bootcamps.",
+      "Participated in open-source contributions."
+    ],
+    tech: ["JavaScript", "React.js", "Git"]
+  }
+];
+
+export const EDUCATION = [
+  {
+    degree: "Bachelor of Technology",
+    institution: "Indore Institute of Science and Technology",
+    duration: "2021 - 2025",
+    details: "Focusing on Software Engineering, Data Structures, and AI."
+  }
+];
+
+export const ACHIEVEMENTS = [
+  { label: "🚀 Featured Products", value: "3+" },
+  { label: "💻 Technologies", value: "20+" },
+  { label: "🎯 Leadership Roles", value: "4+" },
+  { label: "🤖 AI Projects", value: "3" }
+];
+
+export const SKILL_GROUPS = [
+  {
+    title: "Frontend",
+    skills: ["React.js", "TypeScript", "Tailwind CSS", "HTML/CSS"]
+  },
+  {
+    title: "Backend",
+    skills: ["Node.js", "Express", "FastAPI", "Java"]
+  },
+  {
+    title: "Database",
+    skills: ["MongoDB", "MySQL"]
+  },
+  {
+    title: "AI & Real-time",
+    skills: ["Gemini API", "WebRTC", "Socket.io", "AI"]
+  },
+  {
+    title: "Languages",
+    skills: ["JavaScript", "Python", "C++", "Java"]
+  },
+  {
+    title: "Tools",
+    skills: ["Git", "GitHub", "Postman", "Figma"]
+  }
+];
+
+export const CERTIFICATIONS = [
+  { name: "Introduction to Data Science", issuer: "Cisco Networking Academy", date: "May 2026", skills: ["Data Science", "Data Analysis", "Statistics", "Data Visualization"] },
+  { name: "Introduction to Modern AI", issuer: "Cisco Networking Academy", date: "May 2026", skills: ["Artificial Intelligence", "Machine Learning", "Generative AI"] },
+  { name: "Python Essentials 1", issuer: "Python Institute & Cisco Networking Academy", date: "May 2026", skills: ["Python", "Programming Fundamentals", "Problem Solving"] },
+  { name: "Python Essentials 2", issuer: "Python Institute & Cisco Networking Academy", date: "May 2026", skills: ["Advanced Python", "OOP", "File Handling", "Modules"] },
+  { name: "Apply AI: Analyze Customer Reviews", issuer: "Cisco Networking Academy", date: "May 2026", skills: ["AI", "NLP", "Sentiment Analysis", "Customer Review Analysis"] },
+  { name: "What Is Generative AI?", issuer: "LinkedIn Learning", date: "Nov 2024", skills: ["Generative AI", "AI Tools", "Artificial Intelligence"] },
+  { name: "Career Essentials in GitHub Professional Certificate", issuer: "GitHub & LinkedIn Learning", date: "Nov 2024", skills: ["GitHub", "Git", "Version Control", "Collaboration"] },
+  { name: "Introduction to Prompt Engineering for Generative AI", issuer: "LinkedIn Learning", date: "Nov 2024", skills: ["Prompt Engineering", "AI Prompting", "Generative AI"] },
+  { name: "CCNA: Introduction to Networks", issuer: "Cisco Networking Academy", date: "May 2026", skills: ["Networking", "IP Addressing", "Routing", "Switching"] },
+  { name: "CCNA: Switching, Routing, and Wireless Essentials", issuer: "Cisco Networking Academy", date: "May 2026", skills: ["Switching", "Routing", "Wireless Networking", "VLANs"] },
+  { name: "CCNA: Enterprise Networking, Security, and Automation", issuer: "Cisco Networking Academy", date: "May 2026", skills: ["Enterprise Networking", "Security", "Network Automation"] },
+  { name: "Getting Started with Cisco Packet Tracer", issuer: "Cisco Networking Academy", date: "May 2026", skills: ["Cisco Packet Tracer", "Network Simulation", "Network Design"] },
+  { name: "Software Engineer", issuer: "HackerRank", date: "Jun 2026", skills: ["Software Engineering", "DSA", "Algorithms", "Problem Solving", "Programming"] }
+];
