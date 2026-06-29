@@ -446,7 +446,8 @@ export default function GlobeSection() {
           <Canvas
             camera={{ position: [0, 0, 7.5], fov: 45 }}
             style={{ width: "100%", height: "100%", cursor: "grab" }}
-            dpr={[1, 2]} // Optimize for performance
+            dpr={1} // Cap at 1 for mobile stability
+            gl={{ antialias: false, powerPreference: "default" }}
           >
             <ambientLight intensity={0.5} />
             <directionalLight position={[10, 10, 5]} intensity={1} color="#ffffff" />

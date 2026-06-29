@@ -11,7 +11,7 @@ if (typeof window !== 'undefined') {
   }, { passive: true });
 }
 
-function ParticleCloud({ count = 2000 }) { // Reduced from 5000 to 2000 to eliminate compile lag
+function ParticleCloud({ count = typeof window !== 'undefined' && window.innerWidth < 768 ? 600 : 2000 }) { // Reduced for mobile to prevent OOM
   const ref = useRef();
   const groupRef = useRef();
 
@@ -89,7 +89,7 @@ export default function InteractiveBackground() {
         <Canvas 
           camera={{ position: [0, 0, 15] }}
           dpr={1} 
-          gl={{ antialias: false, powerPreference: "high-performance", alpha: true }}
+          gl={{ antialias: false, powerPreference: "default", alpha: true }}
         >
           <ParticleCloud />
         </Canvas>
