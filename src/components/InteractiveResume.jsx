@@ -24,7 +24,7 @@ import resumePdf from "../assets/resume.pdf";
 import avatarImage from "../assets/avatar.png";
 
 // ─── TOOLBAR BUTTON ─────────────────────────────────────────────
-const ToolbarButton = ({ icon: Icon, label, onClick, href }) => {
+const ToolbarButton = ({ icon: Icon, label, onClick, href, className = "" }) => {
   const content = (
     <>
       <Icon size={18} strokeWidth={2} />
@@ -49,14 +49,14 @@ const ToolbarButton = ({ icon: Icon, label, onClick, href }) => {
 
   if (href) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" download={label === "Download PDF" ? "Sourabh_Meena_Resume.pdf" : undefined} style={style} className="toolbar-btn">
+      <a href={href} target="_blank" rel="noopener noreferrer" download={label === "Download PDF" ? "Sourabh_Meena_Resume.pdf" : undefined} style={style} className={`toolbar-btn ${className}`}>
         {content}
       </a>
     );
   }
 
   return (
-    <button onClick={onClick} style={style} className="toolbar-btn">
+    <button onClick={onClick} style={style} className={`toolbar-btn ${className}`}>
       {content}
     </button>
   );
@@ -252,7 +252,7 @@ export default function InteractiveResume({ isOpen, onClose }) {
                 display: "flex", alignItems: "center", background: "var(--bg-secondary)",
                 borderRadius: "50px", padding: "0.4rem 1rem", border: "1px solid var(--border)",
                 marginRight: "1rem"
-              }}>
+              }} className="hide-on-mobile">
                 <Search size={16} style={{ color: "var(--text-muted)", marginRight: "0.5rem" }} />
                 <input
                   type="text"
@@ -267,9 +267,9 @@ export default function InteractiveResume({ isOpen, onClose }) {
               </div>
 
               <ToolbarButton icon={Download} label="Download PDF" href={resumePdf} />
-              <ToolbarButton icon={Printer} label="Print" onClick={handlePrint} />
-              <ToolbarButton icon={Share2} label="Share" onClick={handleShare} />
-              <div style={{ width: "1px", height: "24px", background: "var(--border)", margin: "0 0.5rem" }} />
+              <ToolbarButton icon={Printer} label="Print" onClick={handlePrint} className="hide-on-mobile" />
+              <ToolbarButton icon={Share2} label="Share" onClick={handleShare} className="hide-on-mobile" />
+              <div style={{ width: "1px", height: "24px", background: "var(--border)", margin: "0 0.5rem" }} className="hide-on-mobile" />
               <ToolbarButton icon={X} label="Close (Esc)" onClick={onClose} />
             </div>
           </div>
@@ -548,11 +548,11 @@ export default function InteractiveResume({ isOpen, onClose }) {
         @media (max-width: 900px) {
           .resume-split { flex-direction: column !important; }
           .resume-sidebar { width: 100% !important; border-right: none !important; border-bottom: 1px solid var(--border); max-height: 35vh; }
-          .toolbar-actions { display: none !important; }
+          .hide-on-mobile { display: none !important; }
         }
         @media print {
           .resume-sidebar { display: none !important; }
-          .toolbar-actions { display: none !important; }
+          .hide-on-mobile { display: none !important; }
           #resume-summary, #resume-skills, #resume-experience, #resume-projects, #resume-education, #resume-achievements { page-break-inside: avoid; margin-bottom: 2rem !important; }
         }
       `}</style>
