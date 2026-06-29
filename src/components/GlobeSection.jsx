@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Sphere, Html, QuadraticBezierLine, Environment } from "@react-three/drei";
 import * as THREE from "three";
+import { Globe, Zap, Code, MapPin } from "lucide-react";
 
 // ─── UTILS ─────────────────────────────────────────────────────────────────────
 const GLOBE_RADIUS = 2;
@@ -33,9 +34,9 @@ const DESTINATIONS = [
 ];
 
 const FLOATING_CARDS = [
-  { label: "🌍 Available Worldwide", lat: 45, lng: -40 },
-  { label: "⚡ Remote Collaboration", lat: -20, lng: 20 },
-  { label: "💻 Full-Stack", lat: -15, lng: -100 },
+  { icon: <Globe size={14} strokeWidth={2.5} color="var(--accent, #a78bfa)" />, text: "Available Worldwide", lat: 45, lng: -40 },
+  { icon: <Zap size={14} strokeWidth={2.5} color="var(--accent, #facc15)" />, text: "Remote Collaboration", lat: -20, lng: 20 },
+  { icon: <Code size={14} strokeWidth={2.5} color="var(--accent, #60a5fa)" />, text: "Full-Stack", lat: -15, lng: -100 },
 ];
 
 // ─── GLOBE SCENE ─────────────────────────────────────────────────────────────
@@ -102,20 +103,49 @@ const GlobeScene = () => {
         <meshBasicMaterial color="#EC4899" />
         <Html center>
           <div style={{
-            background: "rgba(10, 10, 15, 0.8)",
-            backdropFilter: "blur(8px)",
-            padding: "0.5rem 0.8rem",
-            borderRadius: "8px",
-            border: "1px solid rgba(236, 72, 153, 0.3)",
-            color: "white",
-            fontSize: "0.75rem",
-            fontWeight: 600,
-            whiteSpace: "nowrap",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.6rem",
+            background: "rgba(255, 255, 255, 0.05)",
+            backdropFilter: "blur(16px) saturate(200%)",
+            WebkitBackdropFilter: "blur(16px) saturate(200%)",
+            padding: "0.4rem 1rem 0.4rem 0.4rem",
+            borderRadius: "50px",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            borderTop: "1px solid rgba(255, 255, 255, 0.2)",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
             transform: "translate(15px, -15px)",
             pointerEvents: "none"
           }}>
-            📍 Indore, India <br />
-            <span style={{ color: "#EC4899", fontSize: "0.65rem", fontWeight: 400 }}>UTC +5:30</span>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "32px",
+              height: "32px",
+              background: "rgba(236, 72, 153, 0.15)",
+              borderRadius: "50%",
+              boxShadow: "inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 2px 5px rgba(0,0,0,0.2)",
+              color: "#EC4899"
+            }}>
+              <MapPin size={16} strokeWidth={2.5} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", paddingRight: "0.2rem" }}>
+              <span style={{
+                color: "rgba(255, 255, 255, 0.95)",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                letterSpacing: "0.02em",
+                fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                whiteSpace: "nowrap",
+                lineHeight: "1.2"
+              }}>
+                Indore, India
+              </span>
+              <span style={{ color: "#EC4899", fontSize: "0.6rem", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                UTC +5:30
+              </span>
+            </div>
           </div>
           <div className="pulse-ring" style={{
             position: "absolute",
@@ -183,20 +213,44 @@ const GlobeScene = () => {
                 animate={{ y: [-5, 5, -5] }}
                 transition={{ duration: 4 + (i % 3), repeat: Infinity, ease: "easeInOut" }}
                 style={{
-                  background: "rgba(20, 20, 30, 0.6)",
-                  backdropFilter: "blur(6px)",
-                  padding: "0.5rem 0.8rem",
-                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.6rem",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(16px) saturate(200%)",
+                  WebkitBackdropFilter: "blur(16px) saturate(200%)",
+                  padding: "0.3rem 1rem 0.3rem 0.3rem",
+                  borderRadius: "50px",
                   border: "1px solid rgba(255, 255, 255, 0.1)",
-                  color: "var(--text-secondary)",
-                  fontSize: "0.7rem",
-                  fontWeight: 600,
-                  whiteSpace: "nowrap",
-                  boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+                  borderTop: "1px solid rgba(255, 255, 255, 0.2)",
+                  boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
                   pointerEvents: "none"
                 }}
               >
-                {card.label}
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "26px",
+                  height: "26px",
+                  background: "rgba(255, 255, 255, 0.08)",
+                  borderRadius: "50%",
+                  boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 5px rgba(0,0,0,0.2)",
+                  color: "var(--accent)"
+                }}>
+                  {card.icon}
+                </div>
+                <span style={{
+                  color: "rgba(255, 255, 255, 0.95)",
+                  fontSize: "0.75rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.03em",
+                  fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                  whiteSpace: "nowrap",
+                  textShadow: "0 1px 2px rgba(0,0,0,0.2)"
+                }}>
+                  {card.text}
+                </span>
               </motion.div>
             </Html>
           </group>
