@@ -721,9 +721,10 @@ function HeroSection() {
             textTransform: "uppercase",
             letterSpacing: "-0.04em",
             lineHeight: 0.9,
-            fontSize: "clamp(4rem, 16vw, 300px)",
+            fontSize: "clamp(2rem, 13vw, 300px)",
             marginTop: "clamp(-0.5rem, -1vw, -2rem)",
-            textAlign: "center"
+            textAlign: "center",
+            whiteSpace: "nowrap"
           }}
         >
           {"I'M SOURABH".split("").map((char, index) => (

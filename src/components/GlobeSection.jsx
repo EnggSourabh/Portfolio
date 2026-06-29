@@ -427,7 +427,7 @@ export default function GlobeSection() {
         {/* RIGHT GLOBE CONTAINER */}
         <div style={{
           flex: "1 1 500px",
-          height: "700px",
+          height: typeof window !== 'undefined' && window.innerWidth < 768 ? "400px" : "700px",
           position: "relative",
           display: "flex",
           justifyContent: "center",
@@ -444,7 +444,7 @@ export default function GlobeSection() {
           }} />
 
           <Canvas
-            camera={{ position: [0, 0, 7.5], fov: 45 }}
+            camera={{ position: [0, 0, typeof window !== 'undefined' && window.innerWidth < 768 ? 10 : 7.5], fov: 45 }}
             style={{ width: "100%", height: "100%", cursor: "grab" }}
             dpr={1} // Cap at 1 for mobile stability
             gl={{ antialias: false, powerPreference: "default" }}
