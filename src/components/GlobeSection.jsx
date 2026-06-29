@@ -426,8 +426,9 @@ export default function GlobeSection() {
 
         {/* RIGHT GLOBE CONTAINER */}
         <div style={{
-          flex: "1 1 500px",
-          height: "700px",
+          flex: "1 1 300px",
+          width: "100%",
+          height: "clamp(350px, 50vh, 700px)",
           position: "relative",
           display: "flex",
           justifyContent: "center",
