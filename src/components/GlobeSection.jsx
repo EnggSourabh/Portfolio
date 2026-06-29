@@ -445,7 +445,7 @@ export default function GlobeSection() {
 
           <Canvas
             camera={{ position: [0, 0, typeof window !== 'undefined' && window.innerWidth < 768 ? 10 : 7.5], fov: 45 }}
-            style={{ width: typeof window !== 'undefined' && window.innerWidth < 768 ? "70%" : "100%", height: "100%", cursor: "grab", margin: "0 auto" }}
+            style={{ width: "100%", height: "100%", cursor: "grab" }}
             dpr={1} // Cap at 1 for mobile stability
             gl={{ antialias: false, powerPreference: "default" }}
           >
